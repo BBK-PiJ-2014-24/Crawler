@@ -13,7 +13,7 @@ public class HTMLreadImpl implements HTMLread{
 		if(Character.isAlphabetic(c1))
 			 c1 = Character.toLowerCase(c1);
 		if(Character.isAlphabetic(c2))
-			c2 = Character.toLowerCase(c1);
+			c2 = Character.toLowerCase(c2);
 		
 		int i = 0;
 		try {
@@ -27,8 +27,10 @@ public class HTMLreadImpl implements HTMLread{
 			System.out.println("ERROR WITH INPUTSTREAM.READ()");
 			e.printStackTrace();
 		}
+		
 		return false;
 	}
+	
 
 	
 }
