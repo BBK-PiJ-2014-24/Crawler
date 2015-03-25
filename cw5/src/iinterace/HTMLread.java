@@ -47,7 +47,7 @@ public interface HTMLread {
 	 * @return If the terminating character was the same as ch2, then the 
 	 * special String value null is returned.
 	 */
-//	String readString(InputStream inpStream, char ch1, char ch2);
+	String readString(InputStream inpStream, char ch1, char ch2);
 	
 	
 	
