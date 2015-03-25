@@ -8,19 +8,19 @@ import iinterace.HTMLread;
 public class HTMLreadImpl implements HTMLread{
 
 	@Override
-	public boolean readUntil(InputStream inpStream, char c1, char c2) {
+	public boolean readUntil(InputStream inpStream, char ch1, char ch2) {
 		
-		if(Character.isAlphabetic(c1))
-			 c1 = Character.toLowerCase(c1);
-		if(Character.isAlphabetic(c2))
-			c2 = Character.toLowerCase(c2);
+		if(Character.isAlphabetic(ch1))
+			 ch1 = Character.toLowerCase(ch1);
+		if(Character.isAlphabetic(ch2))
+			ch2 = Character.toLowerCase(ch2);
 		
 		int i = 0;
 		try {
 			while((i = inpStream.read()) != -1){
-				if((char) i == c1)
+				if((char) i == ch1)
 					return true;
-				else if((char) i == c2)
+				else if((char) i == ch2)
 					return false;
 			}
 		} catch (IOException e) {
