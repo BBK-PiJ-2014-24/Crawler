@@ -15,7 +15,7 @@ public interface HTMLread {
 	 * @param c2
 	 * @return character is the same as ch1 the value true is returned; otherwise, false is returned.
 	 */
-	boolean readUntil(InputStream inpStream, char c1, char c2);
+	boolean readUntil(InputStream inpStream, char ch1, char ch2);
 	
 	/**
 	 * Write a method named skipSpace() that accepts an instance of an InputStream and a char as 
@@ -29,7 +29,7 @@ public interface HTMLread {
 	 * @return it returns the smallest possible value of a char. Otherwise, the method returns 
 	 * the non-whitespace character that was read
 	 */
-	char skipSpace(InputStream inpStream, char c1);
+//	char skipSpace(InputStream inpStream, char ch);
 	
 	
 	
@@ -47,7 +47,7 @@ public interface HTMLread {
 	 * @return If the terminating character was the same as ch2, then the 
 	 * special String value null is returned.
 	 */
-	String readString(InputStream inpStream, char c1, char c2);
+//	String readString(InputStream inpStream, char ch1, char ch2);
 	
 	
 	
