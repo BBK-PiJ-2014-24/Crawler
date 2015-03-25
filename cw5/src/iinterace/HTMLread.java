@@ -29,7 +29,7 @@ public interface HTMLread {
 	 * @return it returns the smallest possible value of a char. Otherwise, the method returns 
 	 * the non-whitespace character that was read
 	 */
-//	char skipSpace(InputStream inpStream, char ch);
+	char skipSpace(InputStream inpStream, char ch);
 	
 	
 	
