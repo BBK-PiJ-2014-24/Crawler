@@ -67,6 +67,32 @@ public class HTMLreadImpl implements HTMLread{
 		return ' '; 	// returns whiteSpace if not found char and not found char after whiteSpace
 		
 	}
+
+	@Override
+	public String readString(InputStream inpStream, char ch1, char ch2) {
+		
+		int i = 0;
+		String s = "";
+		try {
+			while((i = inpStream.read()) != -1){
+				char c = (char) i;
+				
+				if(c == ch1){
+					s += c;
+					return s;
+				}
+				else if(c == ch2)
+					return null;
+				else
+					s+=c;
+			}
+		} catch (IOException e) {
+			System.out.println("ERROR WITH INPUTSTREAM.READ()");
+			e.printStackTrace();
+		}
+		
+		return "readString ERROR";
+	}
 	
 
 	
