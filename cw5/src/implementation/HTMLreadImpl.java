@@ -35,6 +35,8 @@ public class HTMLreadImpl implements HTMLread{
 	public char skipSpace(InputStream inpStream, char ch) {
 		
 		char lowChar = '0';
+		char charBefore = 'b';   // Memory Variable to store the char before the being consumed. 
+		
 		if(Character.isAlphabetic(ch))
 			 ch = Character.toLowerCase(ch);
 		
@@ -42,9 +44,8 @@ public class HTMLreadImpl implements HTMLread{
 		try {
 			while((i = inpStream.read()) != -1){
 				char c = (char) i;
-				char charBefore = 'b'; 
 				if (Character.isAlphabetic(c))
-					c = Character.toLowerCase(lowChar);
+					c = Character.toLowerCase(c);
 				
 				if( c == ch)
 					return lowChar;   // found char returns lowChar 
