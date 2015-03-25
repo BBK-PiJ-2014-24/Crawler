@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,16 +28,17 @@ public class testReadUntil {
 	HTMLread hReader;
 	
 	
-
+	/**
+	 * Set Up Alphabet.txt
+	 * Instantiate an InputStream
+	 * @throws FileNotFoundException
+	 */
 	@Before
 	public void setUp() throws FileNotFoundException{
 		file = new File("Alphabet.txt");
 		inpStream = null;
 		hReader = new HTMLreadImpl();
-	
         inpStream = new FileInputStream(file);
-	
-	
 	}
 	
 	/**
@@ -82,6 +84,18 @@ public class testReadUntil {
 		ans = hReader.readUntil(inpStream, c1, c2);
 		assertFalse("Test That Picks Up Numeric char 2: ", ans);
 		ans = hReader.readUntil(inpStream, c1, c2);
+	}
+	
+	/**
+	 * Close Down InputStream After Tests
+	 */
+	@After
+	public void closeDown(){
+		try {
+			inpStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
