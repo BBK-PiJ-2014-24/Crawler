@@ -18,9 +18,13 @@ public class HTMLreadImpl implements HTMLread{
 		int i = 0;
 		try {
 			while((i = inpStream.read()) != -1){
-				if((char) i == ch1)
+				char c = (char) i;
+				if(Character.isAlphabetic(c))    // Convert char in stream to lowerCase
+					 c = Character.toLowerCase(c);
+				
+				if(c == ch1)
 					return true;
-				else if((char) i == ch2)
+				else if(c == ch2)
 					return false;
 			}
 		} catch (IOException e) {
