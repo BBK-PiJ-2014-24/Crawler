@@ -19,7 +19,7 @@ import org.junit.Test;
  * @author snewnham
  *
  */
-public class testReadUntil {
+public class TestReadUntil {
 	
 	// Fields
 	// ------
