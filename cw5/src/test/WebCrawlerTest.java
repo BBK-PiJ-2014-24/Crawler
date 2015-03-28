@@ -21,6 +21,7 @@ public class WebCrawlerTest {
 	
 	WebCrawler wc;
 	String webPage1;
+	String webPage2;
 	File containerFile;
 	
 	
@@ -28,6 +29,7 @@ public class WebCrawlerTest {
 	public void setUp(){
 		wc = new WebCrawlerImpl();
 		webPage1 = "firstSearch.html";
+		webPage2 = "firstSearch2.html";
 		containerFile = new File("Container.txt");
 	}
 	
@@ -38,7 +40,15 @@ public class WebCrawlerTest {
 	public void pickUpLinkTest1() {
 		String ans = "\"http://google.com\"";
 		String s = wc.crawl(webPage1);
-		assertEquals("Test crawl() can detect a link in HTML page: ", ans,s);
+		assertEquals("Test crawl() can detect a normal looking link in HTML page: ", ans,s);
+	}
+	
+	@Test
+	public void pickUpLinkTest2() {
+		String ans = "\"http://google.com\"";
+		String s = wc.crawl(webPage2);
+		System.out.println("test2 " + s);
+		assertEquals("Test crawl() can detect a link (filled with white-space gaps) in HTML page: ", ans,s);
 	}
 	
 	
