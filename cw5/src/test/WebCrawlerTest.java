@@ -20,25 +20,27 @@ public class WebCrawlerTest {
     // ------
 	
 	WebCrawler wc;
-	String webPage;
+	String webPage1;
 	File containerFile;
 	
 	
 	@Before
 	public void setUp(){
 		wc = new WebCrawlerImpl();
-		webPage = "firstSearch.html";
+		webPage1 = "firstSearch.html";
 		containerFile = new File("Container.txt");
 	}
 	
 	/**
-	 * Test for first search of a web link on a HTML
+	 * Test for first easy search of a web link in firstSearch.html
 	 */
 	@Test
-	public void pickUpLinktest() {
+	public void pickUpLinkTest1() {
 		String ans = "\"http://google.com\"";
-		String s = wc.crawl(webPage);
+		String s = wc.crawl(webPage1);
 		assertEquals("Test crawl() can detect a link in HTML page: ", ans,s);
 	}
+	
+	
 
 }
