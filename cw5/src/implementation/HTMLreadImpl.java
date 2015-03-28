@@ -42,15 +42,15 @@ public class HTMLreadImpl implements HTMLread{
 		char lowChar = '0';
 		char charBefore = '*';   // Memory Variable to store the char before the being consumed. 
 		
-		if(Character.isAlphabetic(ch))
-			 ch = Character.toLowerCase(ch);
+	//	if(Character.isAlphabetic(ch))
+    //		 ch = Character.toLowerCase(ch);
 		
 		int i = 0;
 		try {
 			while((i = inpStream.read()) != -1){
 				char c = (char) i;
-				if (Character.isAlphabetic(c))
-					c = Character.toLowerCase(c);
+	//			if (Character.isAlphabetic(c))
+	//				c = Character.toLowerCase(c);
 				
 				if( c == ch)
 					return lowChar;   // found char returns lowChar 
