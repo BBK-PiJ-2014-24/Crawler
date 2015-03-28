@@ -36,7 +36,7 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void pickUpLinktest() {
-		String ans = "http//:google.com";
+		String ans = "\"http://google.com\"";
 		String s = wc.crawl(webPage);
 		assertEquals("Test crawl() can detect a link in HTML page: ", ans,s);
 	}
