@@ -20,14 +20,14 @@ public class WebCrawlerTest {
     // ------
 	
 	WebCrawler wc;
-	File webPage;
+	String webPage;
 	File containerFile;
 	
 	
 	@Before
 	public void setUp(){
 		wc = new WebCrawlerImpl();
-		webPage = new File("firstSearch.html");
+		webPage = "firstSearch.html";
 		containerFile = new File("Container.txt");
 	}
 	
@@ -37,7 +37,7 @@ public class WebCrawlerTest {
 	@Test
 	public void pickUpLinktest() {
 		String ans = "http//:google.com";
-		String s = wc.crawl();
+		String s = wc.crawl(webPage);
 		assertEquals("Test crawl() can detect a link in HTML page: ", ans,s);
 	}
 
