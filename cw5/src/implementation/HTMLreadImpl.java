@@ -19,6 +19,7 @@ public class HTMLreadImpl implements HTMLread{
 		try {
 			while((i = inpStream.read()) != -1){
 				char c = (char) i;
+				System.out.println(c);  // ++++++
 				if(Character.isAlphabetic(c))    // Convert char in stream to lowerCase
 					 c = Character.toLowerCase(c);
 				
@@ -39,7 +40,7 @@ public class HTMLreadImpl implements HTMLread{
 	public char skipSpace(InputStream inpStream, char ch) {
 		
 		char lowChar = '0';
-		char charBefore = 'b';   // Memory Variable to store the char before the being consumed. 
+		char charBefore = '*';   // Memory Variable to store the char before the being consumed. 
 		
 		if(Character.isAlphabetic(ch))
 			 ch = Character.toLowerCase(ch);
@@ -53,10 +54,10 @@ public class HTMLreadImpl implements HTMLread{
 				
 				if( c == ch)
 					return lowChar;   // found char returns lowChar 
-				else if( charBefore == ' ' && c != ' ')
+				else if(c != ' ')  // =+++++  charBefore == ' ' && 
 					return c;  // found char after white space
-				else 
-					charBefore = c;	
+				//else 
+				//	charBefore = c;	
 			}
 		} 
 		catch (IOException e) {
