@@ -30,9 +30,9 @@ public class WebCrawlerTest {
 	@Before
 	public void setUp(){
 		wc = new WebCrawlerImpl();
-		webPage1 = "firstSearch.html";
-		webPage2 = "href.html";    //"firstSearch2.html";
-		webPage3 = "href2.html";
+		webPage1 = "file:href.html";    //"firstSearch2.html";
+		webPage2 = "file:href2.html";
+		webPage3 = "file:firstSearch.html";
 		containerFile = new File("Container.txt");
 	}
 	
@@ -42,7 +42,7 @@ public class WebCrawlerTest {
 	@Test
 	public void pickUpLinkTest1() {
 		String ans = "\"http://google.com\"";
-		String s = wc.crawl(webPage2);
+		String s = wc.crawl(webPage1);
 		assertEquals("Test crawl() can detect a link (filled with white-space gaps) in HTML page: ", ans,s);
 	}
 	
@@ -52,7 +52,7 @@ public class WebCrawlerTest {
 	@Test
 	public void pickUpLinkTest2() {
 		String ans = "\"http://bbc.co.uk\"";
-		String s = wc.crawl(webPage3);
+		String s = wc.crawl(webPage2);
 		assertEquals("Test crawl() can detect detect Legal and Illegal Link formats of the form <a href = xxxx. com>: "
 				, ans,s);		
 	}
@@ -63,7 +63,7 @@ public class WebCrawlerTest {
     @Test
 	public void pickUpLinkTest3() {
 		String ans = "\"http://google.com\"";
-		String s = wc.crawl(webPage1);
+		String s = wc.crawl(webPage3);
 		assertEquals("Test crawl() can detect a normal looking link in HTML page: ", ans,s);
 	} 
 	
