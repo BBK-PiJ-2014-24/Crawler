@@ -23,6 +23,7 @@ public class WebCrawlerTest {
 	String webPage1;
 	String webPage2;
 	String webPage3;
+	String webPage4;
 	
 	File containerFile;
 	
@@ -33,11 +34,12 @@ public class WebCrawlerTest {
 		webPage1 = "file:href.html";    //"firstSearch2.html";
 		webPage2 = "file:href2.html";
 		webPage3 = "file:firstSearch.html";
+		webPage4 = "http://bbc.co.uk";
 		containerFile = new File("Container.txt");
 	}
 	
 	/**
-	 * Test whether crawl() can detect a legal <a href = "xxxx.xxx">
+	 * Test whether crawl() can detect a legal <a href = "xxxx.xxx"> in local file: href.html
 	 */
 	@Test
 	public void pickUpLinkTest1() {
@@ -47,7 +49,8 @@ public class WebCrawlerTest {
 	}
 	
 	/**
-	 * Test whether crawl() can differentiate between Legal and Illegal Link formats of the form <a href = "xxxx.xxx">
+	 * Test whether crawl() can differentiate between Legal and Illegal Link formats of the form 
+	 * <a href = "xxxx.xxx"> in local file href2.html
 	 */
 	@Test
 	public void pickUpLinkTest2() {
@@ -58,7 +61,8 @@ public class WebCrawlerTest {
 	}
 	
 	/**
-	 * Test for first easy search of a web link in a simple HTML mock up page (firstSearch.html)
+	 * Test for first easy search of a web link in a more realistic HTML mock up page (firstSearch.html)
+	 * 
 	 */
     @Test
 	public void pickUpLinkTest3() {
@@ -67,7 +71,18 @@ public class WebCrawlerTest {
 		assertEquals("Test crawl() can detect a normal looking link in HTML page: ", ans,s);
 	} 
 	
-
+    /**
+     * Test that crawl() can connect to an URL(http://bbc.co.uk) on the WEB and grab the first 
+     * link(m.bbc.co.uk).
+     */
+    
+    @Test
+    public void pickUpLinkTest4(){
+    	String ans = "\"http://m.bbc.co.uk\"";
+    	String s = wc.crawl(webPage4);
+    	System.out.println("I have found: " + s);
+    	assertEquals("Test crawl() can detect a link on the Web: ", ans,s);
+    }
 	
 
 	
