@@ -39,8 +39,8 @@ public class HTMLreadImpl implements HTMLread{
 	@Override
 	public char skipSpace(InputStream inpStream, char ch) {
 		
-		char lowChar = '0';
-		char charBefore = '*';   // Memory Variable to store the char before the being consumed. 
+		char lowChar = (char) Integer.MIN_VALUE;
+	//	char charBefore = '*';   // Memory Variable to store the char before the being consumed. 
 		
 	//	if(Character.isAlphabetic(ch))
     //		 ch = Character.toLowerCase(ch);
