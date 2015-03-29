@@ -15,29 +15,47 @@ import iinterace.WebCrawler;
 public class WebCrawlerImpl implements WebCrawler{
 
 	@Override
-	public String crawl(String url) {
+	public String crawl(String webPage) {
 		
-		File file = new File(url);  // Pick Up the HTML page.
+		//File file = new File(url);  // Pick Up the HTML page.
 		InputStream inpStream = null;
 		HTMLread hReader;
-		char LOW = '0';
+		char LOW = (char) Integer.MIN_VALUE;
 		String ans ="\"";
 		
+		
+		// Set Up URL Connection and InputSteam
+		// ------------------------------------
+		try {
+			URL url2 = new URL(webPage);
+			URLConnection conn = url2.openConnection();
+			inpStream = conn.getInputStream();
+		} catch (IOException ex1) {
+			System.out.println("URL CONNECTION FAILURE");
+			ex1.printStackTrace();
+		}
+		
+		
+		// Search for Links
+		// ----------------
 		try{
-			inpStream = new FileInputStream(file);
+			//inpStream = new FileInputStream(file);
 			hReader = new HTMLreadImpl();
-			hReader.readUntil(inpStream, '<', '>');
-			if(hReader.skipSpace(inpStream,'a')==LOW)
-				if(hReader.skipSpace(inpStream,'h')==LOW)
-					if(hReader.skipSpace(inpStream,'r')==LOW)
-						if(hReader.skipSpace(inpStream,'e')==LOW)
-							if(hReader.skipSpace(inpStream,'f')==LOW)
-								if(hReader.skipSpace(inpStream,'=')==LOW)
-									if(hReader.skipSpace(inpStream,'"')==LOW){
-										ans = hReader.readString(inpStream, '"', '<');
-										System.out.println("Answer = " + ans);
-									}
-										
+			while(inpStream.available()>0){ 		// Search for <a href = " 
+				if(hReader.readUntil(inpStream, '<', '>') == true);
+					if(hReader.skipSpace(inpStream,' ')=='a')
+						if(hReader.readUntil(inpStream, ' ', 'h') == true);   // ++++
+							if(hReader.skipSpace(inpStream,'h')==LOW)
+								if(hReader.skipSpace(inpStream,'r')==LOW)
+									if(hReader.skipSpace(inpStream,'e')==LOW)
+										if(hReader.skipSpace(inpStream,'f')==LOW)
+											if(hReader.skipSpace(inpStream,'=')==LOW)
+												if(hReader.skipSpace(inpStream,'"')==LOW){
+													ans += hReader.readString(inpStream, '"', '<');
+													System.out.println("Answer = " + ans);
+													return ans;
+												} // end if
+			}	// end while
 			
 		}
 		catch(IOException ex){
@@ -51,7 +69,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			}
 		}
 		
-		return "";
+		return "Not Found";
 	}
 
 }
