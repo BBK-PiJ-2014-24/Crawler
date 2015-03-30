@@ -3,6 +3,8 @@ package test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 import iinterace.WebCrawler;
 import implementation.WebCrawlerImpl;
@@ -24,6 +26,7 @@ public class WebCrawlerTest {
 	String webPage2;
 	String webPage3;
 	String webPage4;
+	String webPage5;
 	
 	File containerFile;
 	
@@ -85,7 +88,25 @@ public class WebCrawlerTest {
     }
 	
 
-	
+    /**
+     * A Test to see if crawl() can detect multiple links in a local HTML file.
+     */
+	@Test
+	public void multipleLinkTest1(){
+		
+		ArrayList<String> strArr = new ArrayList<String>();
+		strArr.add("\"http://google.com\"");
+		strArr.add("\"http://bbc.co.uk\"");
+		strArr.add("\"http://mises.org\"");
+		int numLinks = strArr.size();
+		
+		PriorityQueue<WebNode> q = wc.crawl(webPage5);
+		assertEquals("crawl correctly counts number of links: ", numLinks, q.size());
+		for(WebNode w : q){
+			assertEquals("crawl identifies multiplies Links", strArr.contains(w));
+		}
+		
+	}
 	
 
 }
