@@ -6,7 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-import iinterace.WebCrawler;
+import iinterface.WebCrawler;
+import iinterface.WebNode;
 import implementation.WebCrawlerImpl;
 
 import org.junit.Before;
@@ -47,7 +48,9 @@ public class WebCrawlerTest {
 	@Test
 	public void pickUpLinkTest1() {
 		String ans = "\"http://google.com\"";
-		String s = wc.crawl(webPage1);
+		PriorityQueue<WebNode> q = wc.crawl(webPage1);
+		WebNode node = q.poll();
+		String s = node.getWebLink();
 		assertEquals("Test crawl() can detect a link (filled with white-space gaps) in HTML page: ", ans,s);
 	}
 	
@@ -58,7 +61,9 @@ public class WebCrawlerTest {
 	@Test
 	public void pickUpLinkTest2() {
 		String ans = "\"http://bbc.co.uk\"";
-		String s = wc.crawl(webPage2);
+		PriorityQueue<WebNode> q = wc.crawl(webPage2);
+		WebNode node = q.poll();
+		String s = node.getWebLink();
 		assertEquals("Test crawl() can detect detect Legal and Illegal Link formats of the form <a href = xxxx. com>: "
 				, ans,s);		
 	}
@@ -70,8 +75,10 @@ public class WebCrawlerTest {
     @Test
 	public void pickUpLinkTest3() {
 		String ans = "\"http://google.com\"";
-		String s = wc.crawl(webPage3);
-		assertEquals("Test crawl() can detect a normal looking link in HTML page: ", ans,s);
+		PriorityQueue<WebNode> q = wc.crawl(webPage3);
+		WebNode node = q.poll();
+		String s = node.getWebLink();
+		assertEquals("Test crawl() can detect a normal looking link in HTML page: ", ans, s);
 	} 
 	
     /**
@@ -82,7 +89,9 @@ public class WebCrawlerTest {
     @Test
     public void pickUpLinkTest4(){
     	String ans = "\"http://m.bbc.co.uk\"";
-    	String s = wc.crawl(webPage4);
+    	PriorityQueue<WebNode> q = wc.crawl(webPage4);
+		WebNode node = q.poll();
+		String s = node.getWebLink();
     	System.out.println("I have found: " + s);
     	assertEquals("Test crawl() can detect a link on the Web: ", ans,s);
     }
