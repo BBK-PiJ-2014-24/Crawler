@@ -8,20 +8,39 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
 
-import iinterace.HTMLread;
-import iinterace.WebCrawler;
+import iinterface.HTMLread;
+import iinterface.WebCrawler;
+import iinterface.WebNode;
 
 public class WebCrawlerImpl implements WebCrawler{
 
+	// Fields
+	// ------
+	private PriorityQueue<WebNode> queue;
+	private int priorityNum;
+	
+	// Constructor
+	// -----------
+	public WebCrawlerImpl(){
+		queue = new PriorityQueue<WebNode>(new priorityComparator());  // See below for priorityComparator
+		priorityNum = 0;
+	}
+	
+	
+	// crawl()
+	// -------
 	@Override
-	public String crawl(String webPage) {
+	public PriorityQueue<WebNode> crawl(String webPage) {
 		
 		//File file = new File(url);  // Pick Up the HTML page.
 		InputStream inpStream = null;
 		HTMLread hReader;
 		char LOW = (char) Integer.MIN_VALUE;
-		String ans ="\"";
+		
 		
 		
 		// Set Up URL Connection and InputSteam
@@ -42,7 +61,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			//inpStream = new FileInputStream(file);
 			hReader = new HTMLreadImpl();
 			while(inpStream.available()>0){ 		// Search for <a href = " 
-				if(hReader.readUntil(inpStream, '<', '>') == true);
+				if(hReader.readUntil(inpStream, '<', '!') == true);
 					if(hReader.skipSpace(inpStream,' ')=='a')
 						if(hReader.readUntil(inpStream, ' ', 'h') == true);   // ++++
 							if(hReader.skipSpace(inpStream,'h')==LOW)
@@ -51,25 +70,47 @@ public class WebCrawlerImpl implements WebCrawler{
 										if(hReader.skipSpace(inpStream,'f')==LOW)
 											if(hReader.skipSpace(inpStream,'=')==LOW)
 												if(hReader.skipSpace(inpStream,'"')==LOW){
-													ans += hReader.readString(inpStream, '"', '<');
-													System.out.println("Answer = " + ans);
-													return ans;
+													String link = "\"";
+													link += hReader.readString(inpStream, '"', '<');
+													System.out.println("Answer = " + link);
+													WebNode w = new WebNodeImpl(link, priorityNum);
+													queue.add(w);
 												} // end if
 			}	// end while
-			
 		}
 		catch(IOException ex){
 			ex.printStackTrace();
 		}
 		finally{
 			try {
+				priorityNum++;
 				inpStream.close();
+				return queue;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-		
-		return "Not Found";
-	}
+		}  // end Finally
+		return queue;
+	} // end crawl()
 
+} // end class
+
+/**
+ * Comparator class to order the priority queue of WebNodes by their priority Number.
+ * @author snewnham
+ *
+ */
+class priorityComparator implements Comparator<WebNode>{
+
+	/**
+	 * Ranks WebNodes by their priorityNumber
+	 */
+	@Override
+	public int compare(WebNode w1, WebNode w2) {
+		
+		if(w1.getPriorityNum() > w2.getPriorityNum()) return 1;
+		if(w1.getPriorityNum() < w2.getPriorityNum()) return -1;
+		return 0;
+	}
+	
 }
