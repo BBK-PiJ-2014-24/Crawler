@@ -12,5 +12,5 @@ public interface WebCrawler {
 	 * @parameter url - The URL to be Searched for Links
 	 * @return Returns a URL link found on the page
 	 */
-	PriorityQueue<WebNode> q = crawl(String url);
+	PriorityQueue<WebNode> crawl(String url);
 }
