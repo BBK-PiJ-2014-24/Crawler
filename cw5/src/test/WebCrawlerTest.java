@@ -39,6 +39,7 @@ public class WebCrawlerTest {
 		webPage2 = "file:href2.html";
 		webPage3 = "file:firstSearch.html";
 		webPage4 = "http://bbc.co.uk";
+		webPage5 = "file:href2a.html";
 		containerFile = new File("Container.txt");
 	}
 	
@@ -110,9 +111,10 @@ public class WebCrawlerTest {
 		int numLinks = strArr.size();
 		
 		PriorityQueue<WebNode> q = wc.crawl(webPage5);
+		System.out.println("\n" + q.toString());;
 		assertEquals("crawl correctly counts number of links: ", numLinks, q.size());
 		for(WebNode w : q){
-			assertEquals("crawl identifies multiplies Links", strArr.contains(w));
+			assertTrue("crawl identifies multiplies Links", strArr.contains(w.getWebLink()));
 		}
 		
 	}
