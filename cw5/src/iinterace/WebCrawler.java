@@ -1,5 +1,9 @@
 package iinterace;
 
+import java.util.PriorityQueue;
+
+import test.WebNode;
+
 public interface WebCrawler {
 
 	/**
@@ -8,5 +12,5 @@ public interface WebCrawler {
 	 * @parameter url - The URL to be Searched for Links
 	 * @return Returns a URL link found on the page
 	 */
-	 String crawl(String url);
+	PriorityQueue<WebNode> q crawl(String url);
 }
