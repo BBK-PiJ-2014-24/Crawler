@@ -28,6 +28,9 @@ public class WebCrawlerTest {
 	String webPage3;
 	String webPage4;
 	String webPage5;
+	String webPage6;
+	String webPage7;
+	String webPage8;
 	
 	File containerFile;
 	
@@ -35,11 +38,15 @@ public class WebCrawlerTest {
 	@Before
 	public void setUp(){
 		wc = new WebCrawlerImpl();
-		webPage1 = "file:href.html";    //"firstSearch2.html";
+		webPage1 = "file:href.html";    
 		webPage2 = "file:href2.html";
 		webPage3 = "file:firstSearch.html";
-		webPage4 = "http://bbc.co.uk";
+		webPage4 = "http://www.tobycarvery.co.uk";
 		webPage5 = "file:href2a.html";
+		webPage6 = "file:href3.html";
+		webPage7 = "file:hrefBase.html";
+		webPage8 = "http://www.dcs.bbk.ac.uk/%7Emartin/sewn/ls3/testpage.html";
+		
 		containerFile = new File("Container.txt");
 	}
 	
@@ -89,7 +96,7 @@ public class WebCrawlerTest {
     
     @Test
     public void pickUpLinkTest4(){
-    	String ans = "\"http://m.bbc.co.uk\"";
+    	String ans = "\"/nationalsearch/\"";
     	PriorityQueue<WebNode> q = wc.crawl(webPage4);
 		WebNode node = q.poll();
 		String s = node.getWebLink();
@@ -115,9 +122,40 @@ public class WebCrawlerTest {
 		assertEquals("crawl correctly counts number of links: ", numLinks, q.size());
 		for(WebNode w : q){
 			assertTrue("crawl identifies multiplies Links", strArr.contains(w.getWebLink()));
+		} 
+	}
+		
+	    /**
+	     * A Test to see if crawl() can detect multiple links in a local HTML file filled with 
+	     * normal text.
+	     */
+		@Test
+		public void multipleLinkTest2(){
+			
+			ArrayList<String> strArr = new ArrayList<String>();
+			strArr.add("\"http://google.com\"");
+			strArr.add("\"http://bbc.co.uk\"");
+			strArr.add("\"http://mises.org\"");
+			int numLinks = strArr.size();
+			
+			PriorityQueue<WebNode> q = wc.crawl(webPage6);
+			System.out.println("\n" + q.toString());;
+			assertEquals("crawl correctly counts number of links: ", numLinks, q.size());
+			for(WebNode w : q){
+				assertTrue("crawl() identifies multiplies Links", strArr.contains(w.getWebLink()));
+			} 
 		}
 		
-	}
+		/**
+		 * Test to detect a Base Link in a Local HTML page and combine it with its base element.
+		 */
+		@Test
+		public void pickUpBaseLink(){
+			String ans = "\"http://www.tobycarvery.co.uk/nationalsearch/\"";
+			PriorityQueue<WebNode> q = wc.crawl(webPage7);
+			String s = q.poll().getWebLink();
+			assertEquals("crawl() identifies base links",ans, s);	
+		}
 	
 
 }
