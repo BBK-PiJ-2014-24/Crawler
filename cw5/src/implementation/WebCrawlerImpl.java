@@ -106,18 +106,37 @@ public class WebCrawlerImpl implements WebCrawler{
 		StringTokenizer st = new StringTokenizer(link, "/");
 		int count = st.countTokens();
 		
-		root = st.nextToken() + "//" + st.nextToken();
+		root = st.nextToken() + "//" + st.nextToken(); // add back "//" in "http://"
 		
 		if(count > 3){  // 2 Tokens are Used and Don't Want to Concaternate Last Token
 			for(int i=0; i<count-3; i++){
 				root += "/" + st.nextToken();  // add / to facilitate future concaternation with root references.
 			}
 		}
-	
 		root+="/"; // add / to facilitate future concaternation with root references.
-	
-		
 		return root;
+	}
+
+
+	@Override
+	public String linkAnalyzer(String link, String root) {
+
+		char c = link.charAt(1);
+		if(c == 'h'){  //absolute link
+			return link;
+		}
+		else if(c == '/'){ // root+relative link
+			root = link.substring(0,link.lastIndexOf('"'));  // get rid of end "
+			link = link.substring(2);  						// get rid of start " and /
+			return root + link;
+		}
+		else if(c == '.'){ // relative link
+			root = link.substring(0,link.lastIndexOf('"'));  // get rid of end "
+			link = link.substring(4);  						// get rid of start " and ../
+			return root + link;
+		}
+		
+		return "Incorrect Link Concaternation";
 	}
 	
 	
