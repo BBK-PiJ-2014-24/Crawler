@@ -121,19 +121,17 @@ public class WebCrawlerImpl implements WebCrawler{
 	@Override
 	public String linkAnalyzer(String link, String root) {
 
-		char c = link.charAt(1);
+		char c = link.charAt(0);
 		if(c == 'h'){  //absolute link
-			return link;
+			return "\"" + link + "\"";
 		}
 		else if(c == '/'){ // root+relative link
-			root = link.substring(0,link.lastIndexOf('"'));  // get rid of end "
-			link = link.substring(2);  						// get rid of start " and /
-			return root + link;
+			link = link.substring(1);  						// get rid of start " and /
+			return "\"" + root + link + "\"";
 		}
 		else if(c == '.'){ // relative link
-			root = link.substring(0,link.lastIndexOf('"'));  // get rid of end "
-			link = link.substring(4);  						// get rid of start " and ../
-			return root + link;
+			link = link.substring(3);  						// get rid of start " and ../
+			return "\"" + root + link + "\"";
 		}
 		
 		return "Incorrect Link Concaternation";
