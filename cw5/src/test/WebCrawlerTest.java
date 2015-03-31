@@ -160,20 +160,24 @@ public class WebCrawlerTest {
 		 * Test to cut back a base ref to its root
 		 */
 		@Test
-		public void testRoot(){
+		public void testExtractRoot(){
 			
 			String baseRef1 = "http://www.tobycarvery.co.uk/index.html";
 			String baseRef2 = "http://www.tobycarvery.co.uk/";
 			String baseRef3 = "http://www.tobycarvery.co.uk";
-			String root = "http://www.tobycarvery.co.uk/";
+			String baseRef4 = "http://www.tobycarvery.co.uk/directory/index.html";
+			String rootA = "http://www.tobycarvery.co.uk/";
+			String rootB = "http://www.tobycarvery.co.uk/directory/";
+			
 			
 			String ans1 = wc.extractRoot(baseRef1);
 			String ans2 = wc.extractRoot(baseRef2);
 			String ans3 = wc.extractRoot(baseRef3);
-			assertEquals("Test extractRoot() on a standard base reference: ", root, ans1);
-			assertEquals("Test extractRoot() on a Root Refence: ", root, ans2);
-			assertEquals("Test extractRoot() on a Root Reference with no / on end : ", root, ans3);
-				
+			String ans4 = wc.extractRoot(baseRef4);
+			assertEquals("Test extractRoot() on a standard base reference: ", rootA, ans1);
+			assertEquals("Test extractRoot() on a Root Refence: ", rootA, ans2);
+			assertEquals("Test extractRoot() on a Root Reference with no / on end : ", rootA, ans3);
+			assertEquals("Test extractRoot() on a Root Reference with extra Directory : ", rootB, ans4);	
 			
 		}
 		
