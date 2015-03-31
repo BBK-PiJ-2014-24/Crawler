@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 import iinterface.HTMLread;
 import iinterface.WebCrawler;
@@ -61,7 +62,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			//inpStream = new FileInputStream(file);
 			hReader = new HTMLreadImpl();
 			while(inpStream.available()>0){ 		// Search for <a href = " 
-				if(hReader.readUntil(inpStream, '<', '!') == true);
+				if( hReader.readUntil(inpStream, '<', LOW) == true);
 					if(hReader.skipSpace(inpStream,' ')=='a')
 						if(hReader.readUntil(inpStream, ' ', 'h') == true);   // ++++
 							if(hReader.skipSpace(inpStream,'h')==LOW)
@@ -71,7 +72,7 @@ public class WebCrawlerImpl implements WebCrawler{
 											if(hReader.skipSpace(inpStream,'=')==LOW)
 												if(hReader.skipSpace(inpStream,'"')==LOW){
 													String link = "\"";
-													link += hReader.readString(inpStream, '"', '<');
+													link += hReader.readString(inpStream, '"', LOW);
 													System.out.println("Answer = " + link);
 													WebNode w = new WebNodeImpl(link, priorityNum);
 													queue.add(w);
@@ -92,6 +93,28 @@ public class WebCrawlerImpl implements WebCrawler{
 		}  // end Finally
 		return queue;
 	} // end crawl()
+	
+	
+	/**
+	 * Extracts the root of a link from a declared base element.
+	 * @param link - The base element link
+	 * @return the root of the base element
+	 */
+	public String extractRoot(String link){
+		
+		String root = "";
+		StringTokenizer st = new StringTokenizer(link, "/");
+		int count = st.countTokens();
+		
+		for(int i=0; i<count-1; i++){
+			root += st.nextToken();
+		}
+		
+		root+="/"; // add / to facilitate future concaternation with root references.
+		return root;
+	}
+	
+	
 
 } // end class
 
