@@ -2,8 +2,6 @@ package iinterface;
 
 import java.util.PriorityQueue;
 
-import test.WebNode;
-
 public interface WebCrawler {
 
 	/**
@@ -13,4 +11,12 @@ public interface WebCrawler {
 	 * @return Returns a URL link found on the page
 	 */
 	PriorityQueue<WebNode> crawl(String url);
+	
+	
+	/**
+	 * Extracts the root of a link from a declared base element.
+	 * @param link - The base element link
+	 * @return the root of the base element
+	 */
+	String extractRoot(String link);
 }
