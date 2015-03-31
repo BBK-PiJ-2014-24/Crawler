@@ -189,14 +189,15 @@ public class WebCrawlerTest {
 		public void testLinkAnalyzer(){
 			
 			String absol = "http://www.tobycarvery.co.uk/index.html";  // absolute link
+			String absolReturned = "\"http://www.tobycarvery.co.uk/index.html\"";
 			String root = "http://www.tobycarvery.co.uk/";   // root link
 			String currentLink = "http://www.tobycarvery.co.uk/directory/index.html";
 			String rootRelatLink = "/nationalsearch/";
 			String relatLink = "../nationalsearch/";
-			String concatLink = "http://www.tobycarvery.co.uk/nationalsearch/";
+			String concatLink =   "\"http://www.tobycarvery.co.uk/nationalsearch/\"";
 			
 			String ans1 = wc.linkAnalyzer(absol, root);
-			assertEquals("linkAnalyzer indentifies absolute link", absol, ans1);
+			assertEquals("linkAnalyzer indentifies absolute link", absolReturned, ans1);
 			String ans2 = wc.linkAnalyzer(rootRelatLink, root);
 			assertEquals("linkAnalyzer indentifies root-relative link", concatLink, ans2);
 			String ans3 = wc.linkAnalyzer(relatLink, root);
