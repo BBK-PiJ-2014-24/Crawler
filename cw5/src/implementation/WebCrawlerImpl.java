@@ -106,11 +106,17 @@ public class WebCrawlerImpl implements WebCrawler{
 		StringTokenizer st = new StringTokenizer(link, "/");
 		int count = st.countTokens();
 		
-		for(int i=0; i<count-1; i++){
-			root += st.nextToken();
-		}
+		root = st.nextToken() + "//" + st.nextToken();
 		
+		if(count > 3){  // 2 Tokens are Used and Don't Want to Concaternate Last Token
+			for(int i=0; i<count-3; i++){
+				root += "/" + st.nextToken();  // add / to facilitate future concaternation with root references.
+			}
+		}
+	
 		root+="/"; // add / to facilitate future concaternation with root references.
+	
+		
 		return root;
 	}
 	
