@@ -31,6 +31,7 @@ public class WebCrawlerTest {
 	String webPage6;
 	String webPage7;
 	String webPage8;
+	String webPageX;
 	
 	File containerFile;
 	
@@ -45,7 +46,8 @@ public class WebCrawlerTest {
 		webPage5 = "file:href2a.html";
 		webPage6 = "file:href3.html";
 		webPage7 = "file:hrefBase.html";
-		webPage8 = "http://www.dcs.bbk.ac.uk/%7Emartin/sewn/ls3/testpage.html";
+		webPage8 = "file:hrefRoot.html";
+		webPageX = "http://www.dcs.bbk.ac.uk/%7Emartin/sewn/ls3/testpage.html";
 		
 		containerFile = new File("Container.txt");
 	}
@@ -145,6 +147,37 @@ public class WebCrawlerTest {
 				assertTrue("crawl() identifies multiplies Links", strArr.contains(w.getWebLink()));
 			} 
 		}
+		
+		/**
+		 * Test to see if can extract the root from a base reference
+		 */
+		@Test
+		public void findBaseRefRoot(){
+			
+		}
+		
+		/**
+		 * Test to cut back a base ref to its root
+		 */
+		@Test
+		public void testRoot(){
+			
+			String baseRef1 = "http://www.tobycarvery.co.uk/index.html";
+			String baseRef2 = "http://www.tobycarvery.co.uk/";
+			String baseRef3 = "http://www.tobycarvery.co.uk";
+			String root = "http://www.tobycarvery.co.uk/";
+			
+			String ans1 = wc.extractRoot(baseRef1);
+			String ans2 = wc.extractRoot(baseRef2);
+			String ans3 = wc.extractRoot(baseRef3);
+			assertEquals("Test extractRoot() on a standard base reference: ", root, ans1);
+			assertEquals("Test extractRoot() on a Root Refence: ", root, ans2);
+			assertEquals("Test extractRoot() on a Root Reference with no / on end : ", root, ans3);
+				
+			
+		}
+		
+		
 		
 		/**
 		 * Test to detect a Base Link in a Local HTML page and combine it with its base element.
