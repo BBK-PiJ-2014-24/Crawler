@@ -19,4 +19,18 @@ public interface WebCrawler {
 	 * @return the root of the base element
 	 */
 	String extractRoot(String link);
+	
+	
+	/**
+	 * Identifies whether a link is absolute, root-relative or relative and returns the 
+	 * correctly formed absolute link
+	 * @param link -  The link to be analyzed
+	 * @param root - The root of the base reference
+	 * @param currentLink - The current link the WebCrawler is sitting on. 
+	 * @return if link is absolute, return absolute
+	 * 		   if link is root-relative, return root+root-relative
+	 * 		   if link is relative, return currentLink(minus 1 directory) + relative 	
+	 */
+	String linkAnalyzer(String link, String root, String currentLink);
+	
 }
