@@ -70,12 +70,22 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void pickUpLinkTest2() {
-		String ans = "\"http://bbc.co.uk\"";
+		int ansCount = 3;
+		String ans1 = "\"http://bbc.co.uk\"";
+		String ans2 = "\"https://www.thenewboston.com\"";
+		String ans3 = "\"http://en.wikipedia.org/wiki/Main_Page\"";
 		PriorityQueue<WebNode> q = wc.crawl(webPage2);
-		WebNode node = q.poll();
-		String s = node.getWebLink();
-		assertEquals("Test crawl() can detect detect Legal and Illegal Link formats of the form <a href = xxxx. com>: "
-				, ans,s);		
+		int numLegal = q.size();
+		assertEquals("Test crawl() can Count all Legal forms <a href = xxxx. com>: ", ansCount, numLegal);
+		
+		String s = q.poll().getWebLink();
+		assertEquals("Test crawl() can detect First Legal form <a href = xxxx. com>: ", ans1,s);
+		
+		s = q.poll().getWebLink();
+		assertEquals("Test crawl() can detect Second Legal form <a href = xxxx. com>: ", ans3,s);
+		
+		s = q.poll().getWebLink();
+		assertEquals("Test crawl() can detect Third Legal form <a href = xxxx. com>: ", ans2,s);
 	}
 	
 	/**
@@ -97,7 +107,7 @@ public class WebCrawlerTest {
      */
     @Test
     public void pickUpLinkTest4(){
-    	String ans = "\"nationalsearch/\"";
+    	String ans = "\"http://www.tobycarvery.co.uk/nationalsearch/\"";
     	PriorityQueue<WebNode> q = wc.crawl(webPage4);
 		WebNode node = q.poll();
 		String s = node.getWebLink();
@@ -119,7 +129,7 @@ public class WebCrawlerTest {
 		int numLinks = strArr.size();
 		
 		PriorityQueue<WebNode> q = wc.crawl(webPage5);
-		System.out.println("\n" + q.toString());;
+		//System.out.println("\n" + q.toString());;
 		assertEquals("crawl correctly counts number of links: ", numLinks, q.size());
 		for(WebNode w : q){
 			assertTrue("crawl identifies multiplies Links", strArr.contains(w.getWebLink()));
@@ -140,20 +150,13 @@ public class WebCrawlerTest {
 			int numLinks = strArr.size();
 			
 			PriorityQueue<WebNode> q = wc.crawl(webPage6);
-			System.out.println("\n" + q.toString());;
+			//System.out.println("\n" + q.toString());;
 			assertEquals("crawl correctly counts number of links: ", numLinks, q.size());
 			for(WebNode w : q){
 				assertTrue("crawl() identifies multiplies Links", strArr.contains(w.getWebLink()));
 			} 
 		}
-		
-		/**
-		 * Test to see if can extract the root from a base reference
-		 */
-		@Test
-		public void findBaseRefRoot(){
-			
-		}
+
 		
 		/**
 		 * Test to cut back a base ref to its root
@@ -216,6 +219,16 @@ public class WebCrawlerTest {
 			assertEquals("crawl() identifies that the First in the Queue is the Base Link", ans1, s);
 			s = q.poll().getWebLink(); 
 			assertEquals("crawl() identifies that the Second in the Queue is the root and the root-refernence link",ans2, s);	
+		}
+		
+		@Test
+		public void testBirkbeck(){
+			System.out.println("\nBIRKBECK");
+			PriorityQueue<WebNode> q = wc.crawl(webPageX);
+			String s = q.poll().getWebLink(); 
+			
+			
+			
 		}
 	
 
