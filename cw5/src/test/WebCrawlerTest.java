@@ -92,13 +92,12 @@ public class WebCrawlerTest {
 	} 
 	
     /**
-     * Test that crawl() can connect to an URL(http://bbc.co.uk) on the WEB and grab the first 
-     * link(m.bbc.co.uk).
+     * Test that crawl() can connect to an URL(http://tobycarvery.co.uk) on the WEB and grab the first 
+     * link().
      */
-    
     @Test
     public void pickUpLinkTest4(){
-    	String ans = "\"/nationalsearch/\"";
+    	String ans = "\"nationalsearch/\"";
     	PriorityQueue<WebNode> q = wc.crawl(webPage4);
 		WebNode node = q.poll();
 		String s = node.getWebLink();
@@ -196,24 +195,27 @@ public class WebCrawlerTest {
 			String relatLink = "../nationalsearch/";
 			String concatLink =   "\"http://www.tobycarvery.co.uk/nationalsearch/\"";
 			
-			String ans1 = wc.linkAnalyzer(absol, root);
+			String ans1 = wc.linkAnalyzer(absol, root, currentLink);
 			assertEquals("linkAnalyzer indentifies absolute link", absolReturned, ans1);
-			String ans2 = wc.linkAnalyzer(rootRelatLink, root);
+			String ans2 = wc.linkAnalyzer(rootRelatLink, root, currentLink);
 			assertEquals("linkAnalyzer indentifies root-relative link", concatLink, ans2);
-			String ans3 = wc.linkAnalyzer(relatLink, root);
-			assertEquals("linkAnalyzer indentifies root-relative link", concatLink, ans2);	
+			String ans3 = wc.linkAnalyzer(relatLink, root, currentLink);
+			assertEquals("linkAnalyzer indentifies relative link", concatLink, ans2);	
 		}
 		
 		
 		/**
-		 * Test to detect a Base Link in a Local HTML page and combine it with its base element.
+		 * Test to detect a Root-Relative Link in a Local HTML page and combine it with its base element.
 		 */
 		@Test
 		public void pickUpBaseLink(){
-			String ans = "\"http://www.tobycarvery.co.uk/nationalsearch/\"";
+			String ans1 = "\"http://www.tobycarvery.co.uk/index.html\"";
+			String ans2 = "\"http://www.tobycarvery.co.uk/nationalsearch/\"";
 			PriorityQueue<WebNode> q = wc.crawl(webPage7);
-			String s = q.poll().getWebLink();
-			assertEquals("crawl() identifies base links",ans, s);	
+			String s = q.poll().getWebLink();  // 
+			assertEquals("crawl() identifies that the First in the Queue is the Base Link", ans1, s);
+			s = q.poll().getWebLink(); 
+			assertEquals("crawl() identifies that the Second in the Queue is the root and the root-refernence link",ans2, s);	
 		}
 	
 
