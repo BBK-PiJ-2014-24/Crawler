@@ -41,7 +41,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		InputStream inpStream = null;
 		HTMLread hReader;
 		char LOW = (char) Integer.MIN_VALUE;
-		String root = ""; //= webPage;   // The default root of the link (subject to change below) 
+		String root = "";// The root of the link (subject to change below) 
 		boolean tabTestA = true;  // href link is with <a> anchor tab rather than a <base> tab (aTest = false) 
 		
 		
@@ -84,10 +84,11 @@ public class WebCrawlerImpl implements WebCrawler{
 													link = link.substring(0,link.length()-1);
 													if(tabTestA == false){          // if <base href = 
 														root = extractRoot(link);	// set root of the link
+														link = "\"" + link + "\"";
 														tabTestA = true;      			
 													}
 													else{								// if <a = href =
-														link = linkAnalyzer(link, root);  // convert to absolute link
+														link = linkAnalyzer(link, root, webPage);  // convert to absolute link
 													}									// from any relative or root-relative
 													
 													System.out.println("Crawl Answer = " + link);
@@ -138,7 +139,7 @@ public class WebCrawlerImpl implements WebCrawler{
 
 
 	@Override
-	public String linkAnalyzer(String link, String root) {
+	public String linkAnalyzer(String link, String root, String currentWebPage) {
 
 		char c = link.charAt(0);
 		if(c == '"')											// ignore quote mark
@@ -152,7 +153,8 @@ public class WebCrawlerImpl implements WebCrawler{
 		}
 		else if(c == '.'){ // relative link
 			link = link.substring(3);  						// get rid of start " and ../
-			return "\"" + root + link + "\"";
+			currentWebPage = extractRoot(currentWebPage);   // Go Back UP a Directory in the HTML path
+			return "\"" + currentWebPage + link + "\"";
 		}
 		
 		return "Incorrect Link Concaternation";
