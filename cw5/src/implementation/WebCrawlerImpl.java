@@ -41,7 +41,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		InputStream inpStream = null;
 		HTMLread hReader;
 		char LOW = (char) Integer.MIN_VALUE;
-		String root = extractRoot(webPage);   // The default root of the link (subject to change below) 
+		String root = ""; //= webPage;   // The default root of the link (subject to change below) 
 		boolean tabTestA = true;  // href link is with <a> anchor tab rather than a <base> tab (aTest = false) 
 		
 		
@@ -79,11 +79,12 @@ public class WebCrawlerImpl implements WebCrawler{
 										if(hReader.skipSpace(inpStream,'f')==LOW) // <a href
 											if(hReader.skipSpace(inpStream,'=')==LOW) // <a href =  
 												if(hReader.skipSpace(inpStream,'"')==LOW){ // a href = "
-													String link = "\"";
+													String link = "";
 													link += hReader.readString(inpStream, '"', LOW);
-													if(testTabA == false){          // if <base href = 
+													link = link.substring(0,link.length()-1);
+													if(tabTestA == false){          // if <base href = 
 														root = extractRoot(link);	// set root of the link
-														testTabA = true;      			
+														tabTestA = true;      			
 													}
 													else{								// if <a = href =
 														link = linkAnalyzer(link, root);  // convert to absolute link
@@ -126,7 +127,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		
 		root = st.nextToken() + "//" + st.nextToken(); // add back "//" in "http://"
 		
-		if(count > 3){  // 2 Tokens are Used and Don't Want to Concaternate Last Token
+		if(count > 3){  // 3 As 2 Tokens are Used and Don't Want to Concaternate Last Token
 			for(int i=0; i<count-3; i++){
 				root += "/" + st.nextToken();  // add / to facilitate future concaternation with root references.
 			}
@@ -140,6 +141,8 @@ public class WebCrawlerImpl implements WebCrawler{
 	public String linkAnalyzer(String link, String root) {
 
 		char c = link.charAt(0);
+		if(c == '"')											// ignore quote mark
+			c = link.charAt(1);
 		if(c == 'h'){  //absolute link
 			return "\"" + link + "\"";
 		}
