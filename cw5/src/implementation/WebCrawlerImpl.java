@@ -41,7 +41,8 @@ public class WebCrawlerImpl implements WebCrawler{
 		InputStream inpStream = null;
 		HTMLread hReader;
 		char LOW = (char) Integer.MIN_VALUE;
-		
+		String root = extractRoot(webPage);   // The default root of the link (subject to change below) 
+		boolean tabTestA = true;  // href link is with <a> anchor tab rather than a <base> tab (aTest = false) 
 		
 		
 		// Set Up URL Connection and InputSteam
@@ -59,24 +60,41 @@ public class WebCrawlerImpl implements WebCrawler{
 		// Search for Links
 		// ----------------
 		try{
-			//inpStream = new FileInputStream(file);
 			hReader = new HTMLreadImpl();
-			while(inpStream.available()>0){ 		// Search for <a href = " 
-				if( hReader.readUntil(inpStream, '<', LOW) == true);
-					if(hReader.skipSpace(inpStream,' ')=='a')
-						if(hReader.readUntil(inpStream, ' ', 'h') == true);   // ++++
-							if(hReader.skipSpace(inpStream,'h')==LOW)
-								if(hReader.skipSpace(inpStream,'r')==LOW)
-									if(hReader.skipSpace(inpStream,'e')==LOW)
-										if(hReader.skipSpace(inpStream,'f')==LOW)
-											if(hReader.skipSpace(inpStream,'=')==LOW)
-												if(hReader.skipSpace(inpStream,'"')==LOW){
+			while(inpStream.available()>0){ 										// Start search for links 
+				if(hReader.readUntil(inpStream, '<', LOW) == true){ 				//<
+					char secondDigit = hReader.skipSpace(inpStream,' ');			// ensure next bit is non white space 
+						if(secondDigit == 'a' || secondDigit == 'b'){				// <a or <b
+							if(secondDigit == 'b'){								    //<b
+								if(hReader.skipSpace(inpStream,'a')==LOW)		    //<ba
+									if(hReader.skipSpace(inpStream,'s')==LOW)	    //<bas
+										if(hReader.skipSpace(inpStream,'e')==LOW)	//<base 
+											tabTestA = false; 							// conditions met for finding a 
+							}	// end <base> search													// base reference
+					
+						if(hReader.readUntil(inpStream, ' ', 'h') == true);     // ensure space <a_
+							if(hReader.skipSpace(inpStream,'h')==LOW)           // <a h
+								if(hReader.skipSpace(inpStream,'r')==LOW)       // <a hr
+									if(hReader.skipSpace(inpStream,'e')==LOW)   // <a hre 
+										if(hReader.skipSpace(inpStream,'f')==LOW) // <a href
+											if(hReader.skipSpace(inpStream,'=')==LOW) // <a href =  
+												if(hReader.skipSpace(inpStream,'"')==LOW){ // a href = "
 													String link = "\"";
 													link += hReader.readString(inpStream, '"', LOW);
-													System.out.println("Answer = " + link);
+													if(testTabA == false){          // if <base href = 
+														root = extractRoot(link);	// set root of the link
+														testTabA = true;      			
+													}
+													else{								// if <a = href =
+														link = linkAnalyzer(link, root);  // convert to absolute link
+													}									// from any relative or root-relative
+													
+													System.out.println("Crawl Answer = " + link);
 													WebNode w = new WebNodeImpl(link, priorityNum);
 													queue.add(w);
 												} // end if
+						}
+					}
 			}	// end while
 		}
 		catch(IOException ex){
