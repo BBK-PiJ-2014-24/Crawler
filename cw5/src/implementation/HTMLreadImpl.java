@@ -3,7 +3,7 @@ package implementation;
 import java.io.IOException;
 import java.io.InputStream;
 
-import iinterace.HTMLread;
+import iinterface.HTMLread;
 
 public class HTMLreadImpl implements HTMLread{
 
@@ -19,7 +19,9 @@ public class HTMLreadImpl implements HTMLread{
 		try {
 			while((i = inpStream.read()) != -1){
 				char c = (char) i;
-				System.out.println(c);  // ++++++
+				if(c == '\r' || c == '\n')  // ensure return carriages are treated as white space
+					c = ' ';
+				System.out.print(c);  // ++++++++++++++
 				if(Character.isAlphabetic(c))    // Convert char in stream to lowerCase
 					 c = Character.toLowerCase(c);
 				
@@ -42,16 +44,19 @@ public class HTMLreadImpl implements HTMLread{
 		char lowChar = (char) Integer.MIN_VALUE;
 	//	char charBefore = '*';   // Memory Variable to store the char before the being consumed. 
 		
-	//	if(Character.isAlphabetic(ch))
-    //		 ch = Character.toLowerCase(ch);
+		if(Character.isAlphabetic(ch))
+    		 ch = Character.toLowerCase(ch);
+		
 		
 		int i = 0;
 		try {
 			while((i = inpStream.read()) != -1){
 				char c = (char) i;
-	//			if (Character.isAlphabetic(c))
-	//				c = Character.toLowerCase(c);
-				
+				if (Character.isAlphabetic(c))        
+					c = Character.toLowerCase(c);
+				if(c == '\r' || c == '\n')      // ensure return carriages are treated as white space
+					c = ' ';
+				System.out.print(c);  //++++++ check
 				if( c == ch)
 					return lowChar;   // found char returns lowChar 
 				else if(c != ' ')  // =+++++  charBefore == ' ' && 
