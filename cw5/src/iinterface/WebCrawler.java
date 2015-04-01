@@ -26,11 +26,11 @@ public interface WebCrawler {
 	 * correctly formed absolute link
 	 * @param link -  The link to be analyzed
 	 * @param root - The root of the base reference
-	 * @param currentLink - The current link the WebCrawler is sitting on. 
+	 * @param currentWebPage - The current link the WebCrawler is sitting on. 
 	 * @return if link is absolute, return absolute
 	 * 		   if link is root-relative, return root+root-relative
-	 * 		   if link is relative, return root(minus 1 directory) + relative 	
+	 * 		   if link is relative, return currentWebPage(minus 1 directory) + relative 	
 	 */
-	String linkAnalyzer(String link, String root);
+	String linkAnalyzer(String link, String root, String currentWebPage);
 	
 }
