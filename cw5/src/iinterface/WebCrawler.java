@@ -1,5 +1,6 @@
 package iinterface;
 
+import java.io.File;
 import java.util.PriorityQueue;
 
 public interface WebCrawler {
@@ -32,5 +33,13 @@ public interface WebCrawler {
 	 * 		   if link is relative, return currentWebPage(minus 1 directory) + relative 	
 	 */
 	String linkAnalyzer(String link, String root, String currentWebPage);
+	
+	
+	/**
+	 * Returns a database file containing two tables. One table containing a file of temporary weblinks
+	 * and the other file containing the final selected weblinks.
+	 * @return a file containing the two tables of the database.
+	 */
+	File getDatabase();
 	
 }
