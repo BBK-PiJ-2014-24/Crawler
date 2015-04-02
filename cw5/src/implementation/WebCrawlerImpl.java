@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Comparator;
@@ -24,17 +25,24 @@ public class WebCrawlerImpl implements WebCrawler{
 
 	// Fields
 	// ------
-	private PriorityQueue<WebNode> tempQueue;
+	private PriorityQueue<WebNode> tempQueue; // See below for priorityComparator
 	private PriorityQueue<WebNode> permQueue;
 	private int priorityNum;
 	private File database;
+	private static final String HEADER1 = "\tPriority\t\t\tURL";
+	private static final String LINE = "-----------------------------------------------"
+			+ "--------------------------------------------------------------";
+	
 	
 	// Constructor
 	// -----------
 	public WebCrawlerImpl(){
-		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  // See below for priorityComparator
+		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  
 		priorityNum = 0;
-		//database = new File("database.txt");
+		this.database = new File("database.txt");
+		
+		makeDatabaseHeader();  // Adds Title Headers to database file.
+		
 	}
 	
 	
@@ -112,6 +120,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			try {
 				priorityNum++;
 				inpStream.close();
+				writeToDatabase();
 				return tempQueue;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -181,11 +190,11 @@ public class WebCrawlerImpl implements WebCrawler{
 	 * A private method that writes the PriorityQueue, tempQueue to a text file.
 	 */
 	private void writeToDatabase(){
-		this.database = new File("database.txt");
+		
 		BufferedWriter bw = null;
 		
 		try{
-			FileWriter fw = new FileWriter(this.database);
+			FileWriter fw = new FileWriter(this.database, true);  // true =  ammend
 			bw = new BufferedWriter(fw);
 			
 			for(WebNode wn : tempQueue){
@@ -207,6 +216,35 @@ public class WebCrawlerImpl implements WebCrawler{
 		}
 		
 	}
+	
+	/**
+	 * Create the Title Headers, "Priority" and "URL, for the database file 
+	 */
+	private void makeDatabaseHeader(){
+
+		BufferedWriter bw = null;
+				
+		try{
+			FileWriter fw = new FileWriter(this.database, true);  // true =  ammend
+			bw = new BufferedWriter(fw);
+			bw.write(HEADER1 + "\n");
+			bw.write(LINE + "\n");;
+			
+		}// end try
+		catch (IOException ex1){
+				System.out.println("File Not Writable: " + this.database.toString());
+				ex1.printStackTrace();
+		}
+		finally{
+			try{
+				bw.close();
+			}
+			catch(IOException ex2){
+				System.out.println("File Can't Be Closed");
+			}
+		}
+	}
+	
 	
 	
 
