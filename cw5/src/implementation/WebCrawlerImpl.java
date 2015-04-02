@@ -1,8 +1,10 @@
 package implementation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,18 +19,20 @@ import iinterface.HTMLread;
 import iinterface.WebCrawler;
 import iinterface.WebNode;
 
+
 public class WebCrawlerImpl implements WebCrawler{
 
 	// Fields
 	// ------
-	private PriorityQueue<WebNode> queue;
+	private PriorityQueue<WebNode> tempQueue;
+	private PriorityQueue<WebNode> permQueue;
 	private int priorityNum;
 	private File database;
 	
 	// Constructor
 	// -----------
 	public WebCrawlerImpl(){
-		queue = new PriorityQueue<WebNode>(new priorityComparator());  // See below for priorityComparator
+		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  // See below for priorityComparator
 		priorityNum = 0;
 		//database = new File("database.txt");
 	}
@@ -95,7 +99,7 @@ public class WebCrawlerImpl implements WebCrawler{
 													
 													System.out.println("Crawl Answer = " + link);
 													WebNode w = new WebNodeImpl(link, priorityNum);
-													queue.add(w);
+													tempQueue.add(w);
 												} // end if
 						}
 					}
@@ -108,12 +112,12 @@ public class WebCrawlerImpl implements WebCrawler{
 			try {
 				priorityNum++;
 				inpStream.close();
-				return queue;
+				return tempQueue;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}  // end Finally
-		return queue;
+		return tempQueue;
 	} // end crawl()
 	
 	
@@ -173,6 +177,36 @@ public class WebCrawlerImpl implements WebCrawler{
 	}
 	
 	
+	/**
+	 * A private method that writes the PriorityQueue, tempQueue to a text file.
+	 */
+	private void writeToDatabase(){
+		this.database = new File("database.txt");
+		BufferedWriter bw = null;
+		
+		try{
+			FileWriter fw = new FileWriter(this.database);
+			bw = new BufferedWriter(fw);
+			
+			for(WebNode wn : tempQueue){
+				bw.write(wn.toString() + "\n");
+			} // end loop
+
+		}// end try
+		catch (IOException ex1){
+				System.out.println("File Not Writable: " + this.database.toString());
+				ex1.printStackTrace();
+		}
+		finally{
+			try{
+				bw.close();
+			}
+			catch(IOException ex2){
+				System.out.println("File Can't Be Closed");
+			}
+		}
+		
+	}
 	
 	
 
