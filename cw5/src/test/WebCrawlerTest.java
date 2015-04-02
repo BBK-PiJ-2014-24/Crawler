@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 import iinterface.WebCrawler;
@@ -221,10 +222,25 @@ public class WebCrawlerTest {
 			assertEquals("crawl() identifies that the Second in the Queue is the root and the root-refernence link",ans2, s);	
 		}
 		
+		
+		/**
+		 * Test whether crawl() can detect any legal html references in Mark Levene's Test Page
+		 * http://www.dcs.bbk.ac.uk/%7Emartin/sewn/ls3/testpage.html
+		 */
 		@Test
 		public void testBirkbeck(){
 			System.out.println("\nBIRKBECK");
+			List<String> ansArr = new ArrayList<String>();
+			ansArr.add("\"http://www.dcs.bbk.ac.uk/~mark/\"");
+			ansArr.add("\"http://www.searchengineworld.com/robots/robots_tutorial.htm\"");
+			ansArr.add("\"http://www.cse.ucsc.edu/~ejw/tatum/images/tatum-crawling.jpg\"");
+			ansArr.add("\"http://www.dcs.bbk.ac.uk/~martin/sewn/ls3/images/GoodGoing-YouGotTheLink.jpg\"");
+			ansArr.add("Incorrect Link Concaternation");  // ftp page issue
 			PriorityQueue<WebNode> q = wc.crawl(webPageX);
+			for(WebNode node : q){
+				String s = node.getWebLink();
+				assertTrue("Test crawl() on Mark Levine's Test Page: ", ansArr.contains(s)); 
+			}
 			String s = q.poll().getWebLink(); 
 			
 			
