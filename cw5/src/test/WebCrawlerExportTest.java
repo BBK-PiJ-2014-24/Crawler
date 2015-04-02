@@ -13,6 +13,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.apache.commons.io.FileUtils;;
 
+/**
+ * A New Class of tests specifically to deal with correctly returning the database tables 
+ * from the WebCrawler class.
+ * 
+ * N.b. This class uses "Apache commons API" to compare files in JUnit tests.
+ * @author snewnham
+ *
+ */
+
 public class WebCrawlerExportTest {
 
 	String webPage1;
@@ -26,6 +35,9 @@ public class WebCrawlerExportTest {
 		containerFile = new File("Container.txt");
 	}
 
+	/**
+	 * Test to check that getDatabase correctly returns the right datalinks in its temp database table.
+	 */
 	@Test
 	public void compareTempDataBasetest() {
 		
