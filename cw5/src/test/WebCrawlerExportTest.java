@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 
 import iinterface.WebCrawler;
 import iinterface.WebNode;
+import implementation.WebCrawlerImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,27 +31,34 @@ public class WebCrawlerExportTest {
 	
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp(){
 		webPage1 = "file:href3.html";
 		containerFile = new File("Container.txt");
+		wc = new WebCrawlerImpl();
 	}
 
 	/**
-	 * Test to check that getDatabase correctly returns the right datalinks in its temp database table.
+	 * Test to check that getDatabase() correctly returns a text file that contains the right 
+	 * data links in its temp database table file.
 	 */
 	@Test
-	public void compareTempDataBasetest() {
+	public void compareTempDatabaseTest() {
 		
+		
+		System.out.println("Start Test");
 		PriorityQueue<WebNode> q = wc.crawl(webPage1);
 		File database = wc.getDatabase();
+		File ans1 = new File("myDatabase1.txt");
 	
 		try {
-			assertEquals("The files differ!", 
-				    FileUtils.readFileToString(database, "utf-8"), 
-				    FileUtils.readFileToString(containerFile, "utf-8"));
+			assertEquals("The files differ 1", 
+				    FileUtils.readFileToString(ans1, "utf-8"), 
+				    FileUtils.readFileToString(database, "utf-8"));
 			
-			assertTrue("The files differ!", FileUtils.contentEquals(database, containerFile));
-		} catch (IOException e) {
+			assertTrue("The files differ 2", FileUtils.contentEquals(ans1, database));
+		} 
+		
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
