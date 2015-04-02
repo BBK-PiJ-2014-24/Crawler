@@ -23,12 +23,14 @@ public class WebCrawlerImpl implements WebCrawler{
 	// ------
 	private PriorityQueue<WebNode> queue;
 	private int priorityNum;
+	private File database;
 	
 	// Constructor
 	// -----------
 	public WebCrawlerImpl(){
 		queue = new PriorityQueue<WebNode>(new priorityComparator());  // See below for priorityComparator
 		priorityNum = 0;
+		//database = new File("database.txt");
 	}
 	
 	
@@ -144,14 +146,18 @@ public class WebCrawlerImpl implements WebCrawler{
 		char c = link.charAt(0);
 		if(c == '"')											// ignore quote mark
 			c = link.charAt(1);
-		if(c == 'h'){  //absolute link
+		
+		if(c == 'h'){  //check for absolute link
 			return "\"" + link + "\"";
 		}
-		else if(c == '/'){ // root+relative link
-			link = link.substring(1);  						// get rid of start " and /
+		else if(c == '/'){ // check for root+relative link
+			if(root ==""){  // if a root has not yet been detected...
+				root = extractRoot(currentWebPage);  //extract one from currentWebPage
+			}
+			link = link.substring(1);  	// get rid of starting quote mark " and /
 			return "\"" + root + link + "\"";
 		}
-		else if(c == '.'){ // relative link
+		else if(c == '.'){ // check for relative link
 			link = link.substring(3);  						// get rid of start " and ../
 			currentWebPage = extractRoot(currentWebPage);   // Go Back UP a Directory in the HTML path
 			return "\"" + currentWebPage + link + "\"";
@@ -159,10 +165,20 @@ public class WebCrawlerImpl implements WebCrawler{
 		
 		return "Incorrect Link Concaternation";
 	}
+
+
+	@Override
+	public File getDatabase() {
+		return database;
+	}
+	
+	
 	
 	
 
 } // end class
+
+// ----------------------------------------------------------------------------------------
 
 /**
  * Comparator class to order the priority queue of WebNodes by their priority Number.
