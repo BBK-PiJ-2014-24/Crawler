@@ -1,6 +1,10 @@
 package implementation;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import iinterface.DatabaseManager;
@@ -38,8 +42,8 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		else{
 			StringTokenizer st2 = new StringTokenizer(s," ");
 			if(st2.countTokens() == 2){
-				tok1 = st1.nextToken();
-				tok2 = st1.nextToken();
+				tok1 = st2.nextToken();
+				tok2 = st2.nextToken();
 			}
 			else{
 				throw new IllegalArgumentException();
@@ -56,6 +60,41 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		}
 	
 		return wn;
+	}
+
+
+	@Override
+	public int sizeOfTempTable() {
+		
+		BufferedReader br = null;
+		int numWebNodes = 0;
+		
+		try{
+			FileReader fr= new FileReader(databaseFile);
+			br = new BufferedReader(fr);
+			
+			String line;
+			while( (line=br.readLine()) != null || (line=br.readLine()).equals("END")){
+				numWebNodes++;
+			}	
+		}
+		catch(FileNotFoundException ex1){
+			ex1.printStackTrace();
+		}
+		catch(IOException ex2){
+			ex2.printStackTrace();
+		}
+		finally{
+			try{
+				br.close();
+			}
+			catch(IOException ex3){
+				ex3.printStackTrace();
+			}
+		}
+		
+		
+		return numWebNodes;
 	}
 
 }
