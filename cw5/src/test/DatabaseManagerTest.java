@@ -58,5 +58,24 @@ public class DatabaseManagerTest {
 		ex.expect(IllegalArgumentException.class);
 		dm.stringToWebNode(str4);	
 	}
+	
+	/**
+	 * tests for sizeOfTempTable(), checking it can determine the correct size of the database, including
+	 * recognizing an empty table (even when permanent Table is non-Empty). 
+	 */
+	@Test
+	public void testSizeOfTempTable(){
+		int sizeAns1 = 0;
+		int sizeAns2 = 4;
+		
+		file = new File("emptyDatabase.txt");  // set up databaseManager with empty database.
+		DatabaseManager dmEmpty = new DatabaseManagerImpl(file);
+		
+		int x = dmEmpty.sizeOfTempTable();  // size of empty database
+		assertEquals("test 1 for sizeOfTempTable(): ", sizeAns1, x);
+		
+		x = dm.sizeOfTempTable();   // size of non-empty database
+		assertEquals("test 2 for sizeOfTempTable(): ", sizeAns1, x);	
+	}
 
 }
