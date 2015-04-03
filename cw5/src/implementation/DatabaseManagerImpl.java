@@ -1,5 +1,6 @@
 package implementation;
 
+import java.io.File;
 import java.util.StringTokenizer;
 
 import iinterface.DatabaseManager;
@@ -7,6 +8,21 @@ import iinterface.WebNode;
 
 public class DatabaseManagerImpl implements DatabaseManager {
 
+	
+	// Fields
+	// ------
+	
+	private File databaseFile;
+	
+	
+	// Constructor
+	// ----------
+	
+	public DatabaseManagerImpl(File file){
+		this.databaseFile = file;
+	}
+	
+	
 	@Override
 	public WebNode stringToWebNode(String s) throws IllegalArgumentException {
 		
