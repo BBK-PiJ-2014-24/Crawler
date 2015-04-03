@@ -1,4 +1,7 @@
 package iinterface;
+
+import java.io.File;
+
 /**
  * An Interface that connects the WebCrawler to a Database File
  * @author snewnham
@@ -6,6 +9,12 @@ package iinterface;
  */
 public interface DatabaseManager {
 
+	/**
+	 * A Getter for returning the Database containing the URL tables in File format
+	 * @return returns the Database in File format.
+	 */
+	File getDatabaseFile();
+	
 	
 	/**
 	 * Converts a string to a webNode. String must include a priority number and webPage (in that order)
@@ -38,5 +47,7 @@ public interface DatabaseManager {
 	 * @return the next WebNode to be processed by WebCrawler 
 	 */
 	WebNode retrieveNextWebNode();
+	
+	
 	
 }
