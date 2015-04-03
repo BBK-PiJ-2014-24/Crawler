@@ -174,15 +174,15 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		try{
 			FileReader fr= new FileReader(databaseFile);
 			br = new BufferedReader(fr);
-			fw = new FileWriter(tempFile);
+			fw = new FileWriter(tempFile); 
 			bw = new BufferedWriter(fw);
 			
 			String line;
 			
 			line = br.readLine();  // copy and paste headers
-			bw.write(line);
+			bw.write(line + "\n");
 			line = br.readLine();
-			bw.write(line);
+			bw.write(line + "\n");
 			
 			while((line=br.readLine()) != null){
 				StringTokenizer st = new StringTokenizer(line);
@@ -209,8 +209,8 @@ public class DatabaseManagerImpl implements DatabaseManager {
 			try{
 				br.close();
 				bw.close();
-				this.databaseFile = tempFile;
-				tempFile.delete();   // delete temporaryFile
+				
+				this.databaseFile = new File("tempDatabase.txt");
 				return retrievedNode;
 			}
 			catch(IOException ex3){
