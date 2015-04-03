@@ -74,8 +74,11 @@ public class DatabaseManagerTest {
 		int x = dmEmpty.sizeOfTempTable();  // size of empty database
 		assertEquals("test 1 for sizeOfTempTable(): ", sizeAns1, x);
 		
-		x = dm.sizeOfTempTable();   // size of non-empty database
-		assertEquals("test 2 for sizeOfTempTable(): ", sizeAns1, x);	
+		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with NON-empty database.
+		DatabaseManager dmNonEmpty = new DatabaseManagerImpl(file);
+		
+		x = dmNonEmpty.sizeOfTempTable();   // size of non-empty database
+		assertEquals("test 2 for sizeOfTempTable(): ", sizeAns2, x);	
 	}
 
 }
