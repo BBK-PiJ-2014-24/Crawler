@@ -1,6 +1,7 @@
 package iinterface;
 
 import java.io.File;
+import java.util.Queue;
 
 /**
  * An Interface that connects the WebCrawler to a Database File
@@ -48,6 +49,14 @@ public interface DatabaseManager {
 	 */
 	WebNode retrieveNextWebNode();
 	
+	/**
+	 * Write a Queue of WebNodes to the bottom of the table of Temporary URL Links. Returns true if
+	 * the Table still has room to store more WebNodes. Otherwise false.
+	 * @param q Queue of WebNodes
+	 * @return Returns true if the Table still has room to store more WebNodes. Otherwise false.
+	 */
+	boolean writeToTempTable(Queue<WebNode> q);
+
 	
 	
 }
