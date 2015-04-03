@@ -11,5 +11,5 @@ public interface DatabaseManager {
 	 * Converts a string to a webNode. String must include a priority number and webPage and must be
 	 * separated by \t.
 	 */
-	void stringToWebNode(String s);
+	WebNode stringToWebNode(String s);
 }
