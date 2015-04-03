@@ -17,4 +17,11 @@ public interface DatabaseManager {
 	 * in the String. 
 	 */
 	WebNode stringToWebNode(String s) throws IllegalArgumentException;
+	
+	
+	/**
+	 * Determines the number of links in the "Temporary URL Table" found in the Database. 
+	 * @return
+	 */
+	int sizeOfTempTable();
 }
