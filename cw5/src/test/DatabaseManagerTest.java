@@ -6,6 +6,7 @@ import java.io.File;
 
 import iinterface.DatabaseManager;
 import iinterface.WebNode;
+import implementation.DatabaseManagerImpl;
 import implementation.WebNodeImpl;
 
 import org.junit.Before;
@@ -23,7 +24,7 @@ public class DatabaseManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		
-		file = "dmDatabase.txt";
+		file = new File("dmDatabase.txt");
 		dm = new DatabaseManagerImpl(file);
 	}
 	
@@ -42,12 +43,20 @@ public class DatabaseManagerTest {
 		String str2 = "3 http://google.com";		// good
 		String str3 = "3http://google.com";			// bad
 		String str4 = "3 http://google.com 3";		// bad
+		
 		WebNode strNode1 = dm.stringToWebNode(str1);
-		assertEquals("test stringToWebNode(): ", nodeAnswer, str1);
+		assertEquals("test 1a stringToWebNode(): ", nodeAnswer.getPriorityNum(), strNode1.getPriorityNum());
+		assertEquals("test 1b stringToWebNode(): ", nodeAnswer.getWebLink(), strNode1.getWebLink());
+		
 		WebNode strNode2 = dm.stringToWebNode(str2);
-		assertEquals("test stringToWebNode(): ", nodeAnswer, str2);
+		assertEquals("test 2a stringToWebNode(): ", nodeAnswer.getPriorityNum(), strNode2.getPriorityNum());
+		assertEquals("test 2b stringToWebNode(): ", nodeAnswer.getWebLink(), strNode2.getWebLink());
+		
 		ex.expect(IllegalArgumentException.class);
 		dm.stringToWebNode(str3);	
+		
+		ex.expect(IllegalArgumentException.class);
+		dm.stringToWebNode(str4);	
 	}
 
 }
