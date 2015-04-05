@@ -22,7 +22,8 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	// ------
 	
 	private File databaseFile;
-	private int breath;   // prefixed size of the table for temp URL links 
+	private int breath;   // prefixed size of the table for temp URL links
+	private static final int BREATH_DEFAULT = 100;  // Default Max Breath
 	private static final String HEADER1 = "\tPriority\t\t\tURL";
 	private static final String LINE = "-----------------------------------------------"
 			+ "--------------------------------------------------------------";
@@ -32,7 +33,8 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	// Constructor
 	// ----------
 	
-	public DatabaseManagerImpl(File file){
+	public DatabaseManagerImpl(File file, int breath){
+		this.breath = breath;
 		this.databaseFile = file;
 		wipeDatabase();   // wipe the file to be used as the database
 		makeDatabaseHeader(); // add headers 
@@ -42,6 +44,10 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	// --------------
 	public File getDatabaseFile(){
 		return this.databaseFile;
+	}
+	
+	public void setBreath(int breath){
+		this.breath = breath;
 	}
 		
 	
