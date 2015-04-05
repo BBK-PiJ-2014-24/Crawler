@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -22,6 +23,10 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	
 	private File databaseFile;
 	private int breath;   // prefixed size of the table for temp URL links 
+	private static final String HEADER1 = "\tPriority\t\t\tURL";
+	private static final String LINE = "-----------------------------------------------"
+			+ "--------------------------------------------------------------";
+	
 	
 	
 	// Constructor
@@ -29,12 +34,16 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	
 	public DatabaseManagerImpl(File file){
 		this.databaseFile = file;
+		wipeDatabase();   // wipe the file to be used as the database
+		makeDatabaseHeader(); // add headers 
 	}
 	
-	// getter
+	// getter/setters
+	// --------------
 	public File getDatabaseFile(){
 		return this.databaseFile;
 	}
+		
 	
 	// stringToWebNode(String s)
 	// --------------------------
@@ -289,6 +298,47 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		}
 		return false;  // dummy
 	}  // end writeToTempTable()
+	
+	
+	/**
+	 * Create the Title Headers, "Priority" and "URL, for the database file 
+	 */
+	private void makeDatabaseHeader(){
+
+		BufferedWriter bw = null;
+				
+		try{
+			FileWriter fw = new FileWriter(this.databaseFile, true);  // true =  ammend
+			bw = new BufferedWriter(fw);
+			bw.write(HEADER1 + "\n");
+			bw.write(LINE + "\n");;
+			
+		}// end try
+		catch (IOException ex1){
+				System.out.println("File Not Writable: " + this.databaseFile.toString());
+				ex1.printStackTrace();
+		}
+		finally{
+			try{
+				bw.close();
+			}
+			catch(IOException ex2){
+				System.out.println("File Can't Be Closed");
+			}
+		}
+	}
+	
+	
+	/**
+	 * Method to ensure that the database is wiped before each new WebCrawler class is instantiated.
+	 */
+	private void wipeDatabase(){
+		try {
+			new PrintWriter(this.databaseFile).close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 	
 
 } // end class
