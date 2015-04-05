@@ -42,9 +42,15 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	
 	// getter/setters
 	// --------------
+	
+	public void setDatabaseFile(File databaseFile){
+		this.databaseFile = databaseFile;
+	}
+	
 	public File getDatabaseFile(){
 		return this.databaseFile;
 	}
+	
 	
 	public void setBreath(int breath){
 		this.breath = breath;
@@ -269,7 +275,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
 				String line;
 				
 				while((line=br.readLine()) != null){  
-					line = br.readLine();
+					//line = br.readLine();
 					if(line.equals("END")){
 						for(WebNode i : q){					// Add Queue to Bottom of Table
 							String strNode = i.toString();
@@ -316,8 +322,11 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		try{
 			FileWriter fw = new FileWriter(this.databaseFile, true);  // true =  ammend
 			bw = new BufferedWriter(fw);
-			bw.write(HEADER1 + "\n");
-			bw.write(LINE + "\n");;
+			bw.write(HEADER1 + "\n");  // Headers for temp table
+			bw.write(LINE + "\n");
+			bw.write("END" + "\n");		// Marker for end of temp table
+			bw.write(HEADER1 + "\n");  // Headers for Permanent table
+			bw.write(LINE + "\n");
 			
 		}// end try
 		catch (IOException ex1){
