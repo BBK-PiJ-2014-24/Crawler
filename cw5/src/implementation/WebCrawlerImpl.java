@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
+import iinterface.DatabaseManager;
 import iinterface.HTMLread;
 import iinterface.WebCrawler;
 import iinterface.WebNode;
@@ -26,14 +27,14 @@ public class WebCrawlerImpl implements WebCrawler{
 
 	// Fields
 	// ------
-	private PriorityQueue<WebNode> tempQueue; // See below for priorityComparator
-	private PriorityQueue<WebNode> permQueue;
-	private int priorityNum;
-	private File database;
-	private int breath;
-	private int depth;
-	private static final int BREATH_DEFAULT = 100;
-	private static final int DEPTH_DEFAULT = 6;
+	private PriorityQueue<WebNode> tempQueue; // Queue of Links from last crawl
+	private int priorityNum; // Link's priority Number
+	private File database;   // database file
+	private DatabaseManager databaseManager; // database Manager
+	private int breath;  	// Max Number of Links to be stored in Table of Temp URL links 
+	private int depth;		// Max Priority Number a Link Can hold  
+	private static final int BREATH_DEFAULT = 100;  // Default Max Breath
+	private static final int DEPTH_DEFAULT = 6;		// Default Max Depth
 	
 	
 	// Constructor
@@ -43,12 +44,11 @@ public class WebCrawlerImpl implements WebCrawler{
 		priorityNum = 0;
 		breath = BREATH_DEFAULT; // defaults
 		depth = DEPTH_DEFAULT;  // defaults
-		this.database = new File("database.txt");
-		wipeDatabase(); // wipes the database on each new instantiation of WebCrawlerImpl
-		makeDatabaseHeader();  // Adds Title Headers to database file.
-		
+		database = new File("database.txt");
+		databaseManager = new DatabaseManagerImpl(database);
 	}
 	
+
 	// getter/setters
 	// --------------
 	
@@ -68,8 +68,10 @@ public class WebCrawlerImpl implements WebCrawler{
 		return breath;
 	}
 	
-	
-	
+	@Override
+	public File getDatabase() {
+		return database;
+	}
 	
 	// crawl()
 	// -------
@@ -147,7 +149,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			try {
 				priorityNum++;
 				inpStream.close();
-				writeToDatabase();
+				databaseManager.writeToTempTable(tempQueue);
 				return tempQueue;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -207,16 +209,13 @@ public class WebCrawlerImpl implements WebCrawler{
 	}
 
 
-	@Override
-	public File getDatabase() {
-		return database;
-	}
+
 	
 	
 	/**
 	 * A private method that writes the PriorityQueue, tempQueue to a text file.
 	 */
-	private void writeToDatabase(){
+/*	private void writeToDatabase(){
 		
 		BufferedWriter bw = null;
 		
@@ -242,7 +241,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			}
 		}
 		
-	}
+	} */
 	
 } // end class
 
