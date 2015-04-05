@@ -38,7 +38,9 @@ public class DatabaseManagerTest {
 	FileWriter fw;
 	BufferedReader br = null;
 	BufferedWriter bw = null;
-	String webPage1 = "file:href6.html";
+	String webPage1 = "file:href10.html";
+	String webPage2 = "file:href11.html";
+	String webPage3 = "file:href12.html";
 	int breath;
 	
 	
@@ -49,7 +51,7 @@ public class DatabaseManagerTest {
 		dm = new DatabaseManagerImpl(file, breath);
 		
 		// copy and pasting routine 
-		fTemplate = new File("MyDataAnswers1Template.txt");
+		fTemplate = new File("MyDatabaseAnswers1Template.txt");
 		fCopy = new File("MyDataAnswers1a.txt");
 		try{
 			fr = new FileReader(fTemplate);
@@ -123,8 +125,9 @@ public class DatabaseManagerTest {
 		int x = dmEmpty.sizeOfTempTable();  // size of empty database
 		assertEquals("test 1 for sizeOfTempTable(): ", sizeAns1, x);
 		
-		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with NON-empty database.
 		DatabaseManager dmNonEmpty = new DatabaseManagerImpl(file, breath);
+		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with pre-made NON-empty database.
+		dmNonEmpty.setDatabaseFile(file);
 		
 		x = dmNonEmpty.sizeOfTempTable();   // size of non-empty database
 		assertEquals("test 2 for sizeOfTempTable(): ", sizeAns2, x);	
@@ -187,16 +190,22 @@ public class DatabaseManagerTest {
 	 */
 	@Test
 	public void testWriteToTempTable1(){
-		
+	
 		int depth = 6;
 		int breath = 10;
-		WebCrawler wc1 = new WebCrawlerImpl();
-		wc1.setDepth(depth);
-		wc1.setBreath(breath);
-		Queue<WebNode> q = wc1.crawl(webPage1);
-		boolean isFull = dm.writeToTempTable(q);
+		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
+		WebCrawler wc2 = new WebCrawlerImpl();
+		WebCrawler wc3 = new WebCrawlerImpl();
+		wc1.setDepth(depth); wc2.setDepth(depth); wc3.setDepth(depth);
+		wc1.setBreath(breath); wc2.setDepth(depth); wc3.setDepth(depth);
+		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
+		Queue<WebNode> q2 = wc1.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc1.crawl(webPage2);  // href12.html
+		boolean isFull1 = dm.writeToTempTable(q1);  //load Queues into the SAME database
+		boolean isFull2 = dm.writeToTempTable(q2);
+		boolean isFull3 = dm.writeToTempTable(q3);
 		
-		assertFalse("Test to verify that Temp URL is not full: ", isFull);
+		assertFalse("Test to verify that Temp URL is not full: ", isFull3);
 		try {
 			fileC = dm.getDatabaseFile(); 
 			assertEquals("The Temp Table has been correctly updated & Not Full", 
@@ -219,13 +228,19 @@ public class DatabaseManagerTest {
 		
 		int depth = 6;
 		int breath = 10;
-		WebCrawler wc1 = new WebCrawlerImpl();
-		wc1.setDepth(depth);
-		wc1.setBreath(breath);
-		Queue<WebNode> q = wc1.crawl(webPage1);
-		boolean isFull = dm.writeToTempTable(q);
+		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
+		WebCrawler wc2 = new WebCrawlerImpl();
+		WebCrawler wc3 = new WebCrawlerImpl();
+		wc1.setDepth(depth); wc2.setDepth(depth); wc3.setDepth(depth);
+		wc1.setBreath(breath); wc2.setDepth(depth); wc3.setDepth(depth);
+		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
+		Queue<WebNode> q2 = wc1.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc1.crawl(webPage2);  // href12.html
+		boolean isFull1 = dm.writeToTempTable(q1);  //load Queues into the SAME database
+		boolean isFull2 = dm.writeToTempTable(q2);
+		boolean isFull3 = dm.writeToTempTable(q3);
 		
-		assertTrue("Test to verify that Temp URL is NOW full: ", isFull);
+		assertTrue("Test to verify that Temp URL is NOW full: ", isFull3);
 		try {
 			fileC = dm.getDatabaseFile(); 
 			assertEquals("The Temp Table has been correctly updated & NOW Full", 
@@ -247,13 +262,19 @@ public class DatabaseManagerTest {
 		
 		int depth = 6;
 		int breath = 10;
-		WebCrawler wc1 = new WebCrawlerImpl();
-		wc1.setDepth(depth);
-		wc1.setBreath(breath);
-		Queue<WebNode> q = wc1.crawl(webPage1);
-		boolean isFull = dm.writeToTempTable(q);
+		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
+		WebCrawler wc2 = new WebCrawlerImpl();
+		WebCrawler wc3 = new WebCrawlerImpl();
+		wc1.setDepth(depth); wc2.setDepth(depth); wc3.setDepth(depth);
+		wc1.setBreath(breath); wc2.setDepth(depth); wc3.setDepth(depth);
+		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
+		Queue<WebNode> q2 = wc1.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc1.crawl(webPage2);  // href12.html
+		boolean isFull1 = dm.writeToTempTable(q1);  //load Queues into the SAME database
+		boolean isFull2 = dm.writeToTempTable(q2);
+		boolean isFull3 = dm.writeToTempTable(q3);
 		
-		assertTrue("Test to verify that Temp URL is NOW full: ", isFull);
+		assertTrue("Test to verify that Temp URL is NOW full: ", isFull3);
 		try {
 			fileC = dm.getDatabaseFile(); 
 			assertEquals("The Temp Table has NOT been updated as it is already full", 
