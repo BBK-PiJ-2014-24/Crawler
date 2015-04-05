@@ -4,10 +4,13 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Queue;
 
 import iinterface.DatabaseManager;
+import iinterface.WebCrawler;
 import iinterface.WebNode;
 import implementation.DatabaseManagerImpl;
+import implementation.WebCrawlerImpl;
 import implementation.WebNodeImpl;
 
 import org.apache.commons.io.FileUtils;
@@ -25,6 +28,7 @@ public class DatabaseManagerTest {
 	File fileA;
 	File fileB;
 	File fileC;
+	String webPage1 = "file:href6.html";
 	
 	
 	@Before
@@ -112,27 +116,114 @@ public class DatabaseManagerTest {
 		fileB = new File("myDatabaseAnswers1b.txt"); // solution file containing correct retrieval.
 		DatabaseManager dm = new DatabaseManagerImpl(file);
 		WebNode wn = dm.retrieveNextWebNode();  
-		WebNode ansNode = new WebNodeImpl("http://bbc.co.uk",1); // solution for retrieved WebNode
+		WebNode ansNode = new WebNodeImpl("\"http://bbc.co.uk\"",1); // solution for retrieved WebNode
 
 		assertEquals("Test retrieveNextWebNode() for correct PriorityNum", 
 					 ansNode.getPriorityNum(),wn.getPriorityNum());
 		assertEquals("Test retrieveNextWebNode() for correct Web Link", 
 				 ansNode.getWebLink(),wn.getWebLink());
 		try {
+			fileC = dm.getDatabaseFile(); 
 			assertEquals("The database has been correctly amended post retrieval", 
-				    FileUtils.readFileToString(file, "utf-8"), 
-				    FileUtils.readFileToString(fileB, "utf-8"));
+				    FileUtils.readFileToString(fileB, "utf-8"), 
+				    FileUtils.readFileToString(fileC, "utf-8"));
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		fileC = new File("emptyDatabase.txt");  // set up databaseManager with empty database.
-		DatabaseManager dmEmpty = new DatabaseManagerImpl(file);
+		DatabaseManager dmEmpty = new DatabaseManagerImpl(fileC);
 		wn = dmEmpty.retrieveNextWebNode();
 		
 		assertEquals("Test retrieveNextWebNode() returns Null for emptyDatabase", 
 				 null,wn);
+	}
+	
+	
+	
+	/**
+	 * Test writeToTempTable() check that it correctly updates the table of Temporary URL links
+	 * and also returns false if the table is NOT full after the update.
+	 */
+	@Test
+	public void testWriteToTempTable1(){
+		
+		int depth = 6;
+		int breath = 10;
+		WebCrawler wc1 = new WebCrawlerImpl();
+		wc1.setDepth(depth);
+		wc1.setBreath(breath);
+		Queue q = wc1.crawl(webPage1);
+		boolean isFull = dm.writeToTempTable(q);
+		
+		assertFalse("Test to verify that Temp URL is not full: ", isFull);
+		try {
+			fileC = dm.getDatabaseFile(); 
+			assertEquals("The Temp Table has been correctly updated & Not Full", 
+				    FileUtils.readFileToString(fileB, "utf-8"), 
+				    FileUtils.readFileToString(fileC, "utf-8"));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	/**
+	 * Test writeToTempTable() check that it correctly updates the table of Temporary URL links
+	 * and also returns false if the table is now full after the update.
+	 */
+	@Test
+	public void testWriteToTempTable2(){
+		
+		int depth = 6;
+		int breath = 10;
+		WebCrawler wc1 = new WebCrawlerImpl();
+		wc1.setDepth(depth);
+		wc1.setBreath(breath);
+		Queue q = wc1.crawl(webPage1);
+		boolean isFull = dm.writeToTempTable(q);
+		
+		assertTrue("Test to verify that Temp URL is NOW full: ", isFull);
+		try {
+			fileC = dm.getDatabaseFile(); 
+			assertEquals("The Temp Table has been correctly updated & NOW Full", 
+				    FileUtils.readFileToString(fileB, "utf-8"), 
+				    FileUtils.readFileToString(fileC, "utf-8"));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	
+	/**
+	 * Test writeToTempTable() check that it DOES NOT updates the table of Temporary URL links
+	 * because the Table is already full.
+	 */
+	@Test
+	public void testWriteToTempTable3(){
+		
+		int depth = 6;
+		int breath = 10;
+		WebCrawler wc1 = new WebCrawlerImpl();
+		wc1.setDepth(depth);
+		wc1.setBreath(breath);
+		Queue q = wc1.crawl(webPage1);
+		boolean isFull = dm.writeToTempTable(q);
+		
+		assertTrue("Test to verify that Temp URL is NOW full: ", isFull);
+		try {
+			fileC = dm.getDatabaseFile(); 
+			assertEquals("The Temp Table has NOT been updated as it is already full", 
+				    FileUtils.readFileToString(fileB, "utf-8"), 
+				    FileUtils.readFileToString(fileC, "utf-8"));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 
 }
