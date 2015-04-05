@@ -6,6 +6,33 @@ import java.util.PriorityQueue;
 public interface WebCrawler {
 
 	/**
+	 * setter for the maximum priority Number of URL link
+	 * @param d the maximum priority Number of URL link
+	 */
+	public void setDepth(int d);
+	
+	/**
+	 * getter for the maximum priority Number of URL link
+	 * @param d the maximum priority Number of URL link
+	 */
+	public int getDepth();
+	
+	/**
+	 * setter for the maximum Number of URL links stored in a temporary table of a database
+	 * @param b the maximum Number of URL links stored in a temporary table of a database
+	 */
+	public void setBreath(int b);
+	
+	
+	/**
+	 * getter for the maximum Number of URL links stored in a temporary table of a database
+	 * @param b the maximum Number of URL links stored in a temporary table of a database
+	 */
+	public int getBreath();
+	
+	
+	
+	/**
 	 * crawl() method will open an HTTP connection to the starting URL and review the entire web page 
 	 * found there, saving all URL links found within the page to a temporary database table.
 	 * @parameter url - The URL to be Searched for Links
