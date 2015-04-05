@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,8 @@ public class WebCrawlerImpl implements WebCrawler{
 	private PriorityQueue<WebNode> permQueue;
 	private int priorityNum;
 	private File database;
+	private int breath;
+	private int depth;
 	private static final String HEADER1 = "\tPriority\t\t\tURL";
 	private static final String LINE = "-----------------------------------------------"
 			+ "--------------------------------------------------------------";
@@ -40,10 +43,31 @@ public class WebCrawlerImpl implements WebCrawler{
 		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  
 		priorityNum = 0;
 		this.database = new File("database.txt");
-		
+		wipeDatabase(); // wipes the database on each new instantiation of WebCrawlerImpl
 		makeDatabaseHeader();  // Adds Title Headers to database file.
 		
 	}
+	
+	// getter/setters
+	// --------------
+	
+	public void setDepth(int d){
+		this.depth = d;
+	}
+	
+	public int getDepth(){
+		return depth;
+	}
+	
+	public void setBreath(int b){
+		this.breath = b;
+	}
+	
+	public int getBreath(){
+		return breath;
+	}
+	
+	
 	
 	
 	// crawl()
@@ -51,7 +75,9 @@ public class WebCrawlerImpl implements WebCrawler{
 	@Override
 	public PriorityQueue<WebNode> crawl(String webPage) {
 		
-		//File file = new File(url);  // Pick Up the HTML page.
+		WebNode startNode = new WebNodeImpl("\"" + webPage + "\"", priorityNum);
+		tempQueue.add(startNode);  // add the starting URL to queue
+		priorityNum++;
 		InputStream inpStream = null;
 		HTMLread hReader;
 		char LOW = (char) Integer.MIN_VALUE;
@@ -242,6 +268,17 @@ public class WebCrawlerImpl implements WebCrawler{
 			catch(IOException ex2){
 				System.out.println("File Can't Be Closed");
 			}
+		}
+	}
+	
+	/**
+	 * Method to ensure that the database is wiped before each new WebCrawler class is instantiated.
+	 */
+	private void wipeDatabase(){
+		try {
+			new PrintWriter(database).close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 	
