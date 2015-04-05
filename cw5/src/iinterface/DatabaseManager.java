@@ -16,6 +16,12 @@ public interface DatabaseManager {
 	 */
 	public void setBreath(int breath);
 	
+	
+	/**
+	 * A Setter for replacing the database file created by the constructor of DatabaseManager.
+	 */
+	void setDatabaseFile();
+	
 	/**
 	 * A Getter for returning the Database containing the URL tables in File format
 	 * @return returns the Database in File format.
