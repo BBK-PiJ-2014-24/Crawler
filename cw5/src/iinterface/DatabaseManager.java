@@ -11,6 +11,12 @@ import java.util.Queue;
 public interface DatabaseManager {
 
 	/**
+	 * Set the Maximum number of links the temp URL links can contain.
+	 * @param breath  - Maximum number of links the temp URL links can contain
+	 */
+	public void setBreath(int breath);
+	
+	/**
 	 * A Getter for returning the Database containing the URL tables in File format
 	 * @return returns the Database in File format.
 	 */
