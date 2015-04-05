@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -20,6 +21,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	// ------
 	
 	private File databaseFile;
+	private int breath;   // prefixed size of the table for temp URL links 
 	
 	
 	// Constructor
@@ -220,4 +222,73 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		return null;
 	}
 
-}
+	@Override
+	public boolean writeToTempTable(Queue<WebNode> q) {
+		
+		int sizeTable = sizeOfTempTable();
+		int sizeQueue = q.size();
+		boolean isTruncated = false;
+		
+		if(breath >= sizeTable)  // already full
+			return false;
+		else if(breath > sizeTable + sizeQueue){  // overflow
+			int spareRoom = breath - sizeTable;
+			Queue<WebNode> qTruncated = null;
+			for(int i=0; i < spareRoom; i++){   // Truncate Queue to fit Table
+				qTruncated.add(q.poll());
+			}
+			q = qTruncated;
+			isTruncated = true;
+		}
+		else{							// Can Fit In Table
+			BufferedReader br = null;;
+			FileWriter fw;
+			BufferedWriter bw = null;
+			File tempFile = new File("tempDatabase.txt");  // temp Database to write to with amendments
+			try{
+				FileReader fr= new FileReader(databaseFile);
+				br = new BufferedReader(fr);
+				fw = new FileWriter(tempFile); 
+				bw = new BufferedWriter(fw);
+				
+				String line;
+				
+				while((line=br.readLine()) != null){  
+					line = br.readLine();
+					if(line.equals("END")){
+						for(WebNode i : q){					// Add Queue to Bottom of Table
+							String strNode = i.toString();
+							bw.write(strNode + "\n");
+						}
+					} // end if
+					else
+						bw.write(line + "\n");   // copy and paste line
+				} // end while
+			} // end try
+			catch(FileNotFoundException ex1){
+				ex1.printStackTrace();
+			}
+			catch(IOException ex2){
+				ex2.printStackTrace();
+			}
+			finally{
+				try{
+					br.close();
+					bw.close();
+					
+					this.databaseFile = new File("tempDatabase.txt");
+					if(isTruncated == false)
+						return false;
+					else 
+						return true;
+				}
+				catch(IOException ex3){
+					ex3.printStackTrace();
+				}
+			}
+		}
+		return false;  // dummy
+	}  // end writeToTempTable()
+	
+
+} // end class
