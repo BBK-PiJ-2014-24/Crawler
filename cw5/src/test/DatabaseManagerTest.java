@@ -2,7 +2,11 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Queue;
 
@@ -24,18 +28,53 @@ public class DatabaseManagerTest {
 	// Fields
 	// ------
 	DatabaseManager dm;
+	File fTemplate;
+	File fCopy;
 	File file;
 	File fileA;
 	File fileB;
 	File fileC;
+	FileReader fr;
+	FileWriter fw;
+	BufferedReader br = null;
+	BufferedWriter bw = null;
 	String webPage1 = "file:href6.html";
+	int breath;
 	
 	
 	@Before
 	public void setUp() throws Exception {
-		
+		breath = 100;
 		file = new File("dmDatabase.txt");
-		dm = new DatabaseManagerImpl(file);
+		dm = new DatabaseManagerImpl(file, breath);
+		
+		// copy and pasting routine 
+		fTemplate = new File("MyDataAnswers1Template.txt");
+		fCopy = new File("MyDataAnswers1a.txt");
+		try{
+			fr = new FileReader(fTemplate);
+			br = new BufferedReader(fr);
+			
+			fw = new FileWriter(fCopy);
+			bw = new BufferedWriter(fw);
+			
+			String line;
+			while( (line = br.readLine()) != null ){
+				 bw.write(line + "\n");
+			}
+		}
+		catch(Exception ex1){
+			ex1.printStackTrace();
+		}
+		finally{
+			try{
+				br.close();
+				bw.close();
+			}
+			catch(Exception ex2){
+				ex2.printStackTrace();
+			}
+		}
 	}
 	
 	@Rule
@@ -79,13 +118,13 @@ public class DatabaseManagerTest {
 		int sizeAns2 = 4;
 		
 		file = new File("emptyDatabase.txt");  // set up databaseManager with empty database.
-		DatabaseManager dmEmpty = new DatabaseManagerImpl(file);
+		DatabaseManager dmEmpty = new DatabaseManagerImpl(file, breath);
 		
 		int x = dmEmpty.sizeOfTempTable();  // size of empty database
 		assertEquals("test 1 for sizeOfTempTable(): ", sizeAns1, x);
 		
 		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with NON-empty database.
-		DatabaseManager dmNonEmpty = new DatabaseManagerImpl(file);
+		DatabaseManager dmNonEmpty = new DatabaseManagerImpl(file, breath);
 		
 		x = dmNonEmpty.sizeOfTempTable();   // size of non-empty database
 		assertEquals("test 2 for sizeOfTempTable(): ", sizeAns2, x);	
@@ -97,7 +136,7 @@ public class DatabaseManagerTest {
 	@Test
 	public void testPrintTempTable(){
 		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with NON-empty database.
-		DatabaseManager dm = new DatabaseManagerImpl(file);
+		DatabaseManager dm = new DatabaseManagerImpl(file, breath);
 		
 		dm.printTempTable();
 	}
@@ -114,7 +153,7 @@ public class DatabaseManagerTest {
 	public void testRetrieveNextWebNode(){
 		file = new File("myDatabaseAnswers1a.txt");  // set up databaseManager with NON-empty database.
 		fileB = new File("myDatabaseAnswers1b.txt"); // solution file containing correct retrieval.
-		DatabaseManager dm = new DatabaseManagerImpl(file);
+		DatabaseManager dm = new DatabaseManagerImpl(file, breath);
 		WebNode wn = dm.retrieveNextWebNode();  
 		WebNode ansNode = new WebNodeImpl("\"http://bbc.co.uk\"",1); // solution for retrieved WebNode
 
@@ -133,7 +172,7 @@ public class DatabaseManagerTest {
 		}
 		
 		fileC = new File("emptyDatabase.txt");  // set up databaseManager with empty database.
-		DatabaseManager dmEmpty = new DatabaseManagerImpl(fileC);
+		DatabaseManager dmEmpty = new DatabaseManagerImpl(fileC, breath);
 		wn = dmEmpty.retrieveNextWebNode();
 		
 		assertEquals("Test retrieveNextWebNode() returns Null for emptyDatabase", 
@@ -154,7 +193,7 @@ public class DatabaseManagerTest {
 		WebCrawler wc1 = new WebCrawlerImpl();
 		wc1.setDepth(depth);
 		wc1.setBreath(breath);
-		Queue q = wc1.crawl(webPage1);
+		Queue<WebNode> q = wc1.crawl(webPage1);
 		boolean isFull = dm.writeToTempTable(q);
 		
 		assertFalse("Test to verify that Temp URL is not full: ", isFull);
@@ -183,7 +222,7 @@ public class DatabaseManagerTest {
 		WebCrawler wc1 = new WebCrawlerImpl();
 		wc1.setDepth(depth);
 		wc1.setBreath(breath);
-		Queue q = wc1.crawl(webPage1);
+		Queue<WebNode> q = wc1.crawl(webPage1);
 		boolean isFull = dm.writeToTempTable(q);
 		
 		assertTrue("Test to verify that Temp URL is NOW full: ", isFull);
@@ -211,7 +250,7 @@ public class DatabaseManagerTest {
 		WebCrawler wc1 = new WebCrawlerImpl();
 		wc1.setDepth(depth);
 		wc1.setBreath(breath);
-		Queue q = wc1.crawl(webPage1);
+		Queue<WebNode> q = wc1.crawl(webPage1);
 		boolean isFull = dm.writeToTempTable(q);
 		
 		assertTrue("Test to verify that Temp URL is NOW full: ", isFull);
