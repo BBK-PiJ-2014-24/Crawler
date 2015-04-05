@@ -32,9 +32,8 @@ public class WebCrawlerImpl implements WebCrawler{
 	private File database;
 	private int breath;
 	private int depth;
-	private static final String HEADER1 = "\tPriority\t\t\tURL";
-	private static final String LINE = "-----------------------------------------------"
-			+ "--------------------------------------------------------------";
+	private static final int BREATH_DEFAULT = 100;
+	private static final int DEPTH_DEFAULT = 6;
 	
 	
 	// Constructor
@@ -42,6 +41,8 @@ public class WebCrawlerImpl implements WebCrawler{
 	public WebCrawlerImpl(){
 		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  
 		priorityNum = 0;
+		breath = BREATH_DEFAULT; // defaults
+		depth = DEPTH_DEFAULT;  // defaults
 		this.database = new File("database.txt");
 		wipeDatabase(); // wipes the database on each new instantiation of WebCrawlerImpl
 		makeDatabaseHeader();  // Adds Title Headers to database file.
@@ -243,48 +244,6 @@ public class WebCrawlerImpl implements WebCrawler{
 		
 	}
 	
-	/**
-	 * Create the Title Headers, "Priority" and "URL, for the database file 
-	 */
-	private void makeDatabaseHeader(){
-
-		BufferedWriter bw = null;
-				
-		try{
-			FileWriter fw = new FileWriter(this.database, true);  // true =  ammend
-			bw = new BufferedWriter(fw);
-			bw.write(HEADER1 + "\n");
-			bw.write(LINE + "\n");;
-			
-		}// end try
-		catch (IOException ex1){
-				System.out.println("File Not Writable: " + this.database.toString());
-				ex1.printStackTrace();
-		}
-		finally{
-			try{
-				bw.close();
-			}
-			catch(IOException ex2){
-				System.out.println("File Can't Be Closed");
-			}
-		}
-	}
-	
-	/**
-	 * Method to ensure that the database is wiped before each new WebCrawler class is instantiated.
-	 */
-	private void wipeDatabase(){
-		try {
-			new PrintWriter(database).close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	
-
 } // end class
 
 // ----------------------------------------------------------------------------------------
