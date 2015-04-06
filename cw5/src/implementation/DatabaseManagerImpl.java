@@ -428,7 +428,6 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		boolean startSearch = false;  // Flag to Start the search in the Table of Permanent Links
 		
 		BufferedReader br = null;
-		BufferedWriter bw = null;
 		
 		try{
 			FileReader fr= new FileReader(databaseFile);
@@ -440,9 +439,10 @@ public class DatabaseManagerImpl implements DatabaseManager {
 
 				if(line.equals("END")){		// Flag to start Search of the Table of Permanent Links
 					startSearch = true;
+					line = br.readLine();
 				}
-				if(startSearch == true && line != null){ // Search IN the Table of Permanent Links for Duplicates
-					System.out.println(line);
+				if(startSearch == true){ // Search IN the Table of Permanent Links for Duplicates
+					System.out.println(line);  // && line != null
 				}
 			  } // end while
 			}  // end try
