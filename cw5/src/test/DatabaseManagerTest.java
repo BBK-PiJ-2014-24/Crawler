@@ -318,14 +318,14 @@ public class DatabaseManagerTest {
 		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
 		Queue<WebNode> q2 = wc2.crawl(webPage2);  // href11.html
 		Queue<WebNode> q3 = wc3.crawl(webPage3);  // href12.html
-		boolean isFull1 = dm1.writeToTempTable(q1);  //load Queues into the SAME database
-		boolean isFull2 = dm1.writeToTempTable(q2);
-		boolean isFull3 = dm1.writeToTempTable(q3);
+		dm1.writeToTempTable(q1);  //load Queues into the SAME database
+		dm1.writeToTempTable(q2);
+		dm1.writeToTempTable(q3);
 		
 		// Some WebNodes to add to the Table of Permanent Links
-		WebNode wn1 = new WebNodeImpl("http://google.com", 1);
-		WebNode wn2 = new WebNodeImpl("http://mises.org", 2);
-		WebNode wn3 = new WebNodeImpl("http://google.com", 2);  // duplicate!!
+		WebNode wn1 = new WebNodeImpl("\"http://google.com\"", 1);
+		WebNode wn2 = new WebNodeImpl("\"http://mises.org\"", 2);
+		WebNode wn3 = new WebNodeImpl("\"http://google.com\"", 2);  // duplicate!!
 		
 		// Start Adding Perm Links
 		boolean isPermLoad1 = dm1.writeToPemanentTable(wn1);
@@ -334,7 +334,7 @@ public class DatabaseManagerTest {
 		
 		assertTrue("Test to verify that wn1 is in Table of Perm Links: ", isPermLoad1);
 		assertTrue("Test to verify that wn2 is in Table of Perm Links: ", isPermLoad2);
-		assertFalse("Test to verify that wn3 is NOT in Table of Perm Links: ", isPermLoad3);
+		assertFalse("Test to verify that wn3 is a Duplicate & NOT added to Table of Perm Links: ", isPermLoad3);
 		
 		fileC = dm1.getDatabaseFile();
 		
@@ -345,9 +345,7 @@ public class DatabaseManagerTest {
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		
+		}	
 	}
 
 }
