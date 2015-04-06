@@ -54,6 +54,11 @@ public interface DatabaseManager {
 	void printTempTable();
 	
 	/**
+	 * Prints the Links in the Permanent URL Table along with their Priority Number.
+	 */
+	void printPermanentTable();
+	
+	/**
 	 * Interrogates the Temporary URL Table of the database to retrieve the next Web Link to be 
 	 * processed by the WebCrawler. The WebNode is copied from the database, but its priority number 
 	 * is remarked 0 
