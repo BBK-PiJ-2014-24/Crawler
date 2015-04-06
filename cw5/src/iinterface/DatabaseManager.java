@@ -20,7 +20,7 @@ public interface DatabaseManager {
 	/**
 	 * A Setter for replacing the database file created by the constructor of DatabaseManager.
 	 */
-	void setDatabaseFile();
+	void setDatabaseFile(File databaseFile);
 	
 	/**
 	 * A Getter for returning the Database containing the URL tables in File format
@@ -65,7 +65,8 @@ public interface DatabaseManager {
 	 * Write a Queue of WebNodes to the bottom of the table of Temporary URL Links. Returns true if
 	 * the Table still has room to store more WebNodes. Otherwise false.
 	 * @param q Queue of WebNodes
-	 * @return Returns true if the Table still has room to store more WebNodes. Otherwise false.
+	 * @return Returns true if the Table is full (i.e. Table has reached maximum 
+	 * size/breath).
 	 */
 	boolean writeToTempTable(Queue<WebNode> q);
 
