@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ testReadUntil.class, TestSkipSpace.class, TestReadString.class })
+@SuiteClasses({ TestReadUntil.class, TestSkipSpace.class, TestReadString.class,
+				WebCrawlerTest.class, DatabaseManagerTest.class})
 public class AllTests {
 
 }
