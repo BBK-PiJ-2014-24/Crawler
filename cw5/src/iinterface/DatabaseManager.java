@@ -69,6 +69,17 @@ public interface DatabaseManager {
 	 * size/breath).
 	 */
 	boolean writeToTempTable(Queue<WebNode> q);
+	
+	
+	/**
+	 * Write a WebNode to the bottom of the table of Permanent URL Links, checking that there is no
+	 * duplicate ink already in the list. Returns true if the Table is successfully updated or false if
+	 * the link is already in the list.
+	 * @param wn - WebNode to be added to the the table of Permanent URL Links
+	 * @return Returns true if the Table is successfully updated or false if
+	 * the link is already in the list.
+	 */
+	boolean writeToPemanentTable(WebNode wn);
 
 	
 	
