@@ -8,6 +8,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Queue;
 
 import iinterface.DatabaseManager;
@@ -47,35 +53,21 @@ public class DatabaseManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		breath = 100;
-		file = new File("dmDatabase.txt");
+		file = new File("empty.txt");
 		dm = new DatabaseManagerImpl(file, breath);
 		
-		// copy and pasting routine 
-		fTemplate = new File("MyDatabaseAnswers1Template.txt");
-		fCopy = new File("MyDataAnswers1a.txt");
+		// Reseting the DatabaseFiles
+		File fileTemplate = new File("myDatabaseAnswers1Template.txt"); // Template File.
+		fCopy = new File("myDatabaseAnswers1a.txt");
 		try{
-			fr = new FileReader(fTemplate);
-			br = new BufferedReader(fr);
-			
-			fw = new FileWriter(fCopy);
-			bw = new BufferedWriter(fw);
-			
-			String line;
-			while( (line = br.readLine()) != null ){
-				 bw.write(line + "\n");
-			}
-		}
-		catch(Exception ex1){
-			ex1.printStackTrace();
-		}
-		finally{
-			try{
-				br.close();
-				bw.close();
-			}
-			catch(Exception ex2){
-				ex2.printStackTrace();
-			}
+			final Path src = Paths.get(fileTemplate.getCanonicalPath());
+			final Path dst = Paths.get(fCopy.getCanonicalPath());
+			Files.copy(src, dst,StandardCopyOption.REPLACE_EXISTING);  // copy tempFile into databaseFile
+		} catch(FileAlreadyExistsException e) {
+		    //destination file already exists
+		} catch (IOException e) {
+		    //something else went wrong
+		    e.printStackTrace();
 		}
 	}
 	
@@ -126,7 +118,7 @@ public class DatabaseManagerTest {
 		assertEquals("test 1 for sizeOfTempTable(): ", sizeAns1, x);
 		
 		DatabaseManager dmNonEmpty = new DatabaseManagerImpl(file, breath);
-		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with pre-made NON-empty database.
+		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with pre-made NON-empty database table.
 		dmNonEmpty.setDatabaseFile(file);
 		
 		x = dmNonEmpty.sizeOfTempTable();   // size of non-empty database
@@ -138,9 +130,10 @@ public class DatabaseManagerTest {
 	 */
 	@Test
 	public void testPrintTempTable(){
-		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with NON-empty database.
-		DatabaseManager dm = new DatabaseManagerImpl(file, breath);
 		
+		DatabaseManager dm = new DatabaseManagerImpl(file, breath);
+		file = new File("myDatabaseAnswers1.txt");  // set up databaseManager with pre-made NON-empty database table.
+		dm.setDatabaseFile(file);
 		dm.printTempTable();
 	}
 	
@@ -154,12 +147,15 @@ public class DatabaseManagerTest {
 	 */
 	@Test
 	public void testRetrieveNextWebNode(){
-		file = new File("myDatabaseAnswers1a.txt");  // set up databaseManager with NON-empty database.
-		fileB = new File("myDatabaseAnswers1b.txt"); // solution file containing correct retrieval.
+		
 		DatabaseManager dm = new DatabaseManagerImpl(file, breath);
+		file = new File("myDatabaseAnswers1a.txt");  // set up databaseManager with pre-made NON-empty database table.
+		dm.setDatabaseFile(file);
 		WebNode wn = dm.retrieveNextWebNode();  
 		WebNode ansNode = new WebNodeImpl("\"http://bbc.co.uk\"",1); // solution for retrieved WebNode
-
+		
+		fileB = new File("myDatabaseAnswers1b.txt"); // solution file containing correct retrieval.
+		
 		assertEquals("Test retrieveNextWebNode() for correct PriorityNum", 
 					 ansNode.getPriorityNum(),wn.getPriorityNum());
 		assertEquals("Test retrieveNextWebNode() for correct Web Link", 
@@ -180,34 +176,40 @@ public class DatabaseManagerTest {
 		
 		assertEquals("Test retrieveNextWebNode() returns Null for emptyDatabase", 
 				 null,wn);
+				
 	}
 	
 	
 	
 	/**
-	 * Test writeToTempTable() check that it correctly updates the table of Temporary URL links
+	 * Test writeToTempTable() when breath = 10, so that it checks correctly updates the table of Temporary URL links
 	 * and also returns false if the table is NOT full after the update.
 	 */
 	@Test
 	public void testWriteToTempTable1(){
 	
-		int depth = 6;
-		int breath = 10;
+		int breath = 100;  
+		File newFile = new File("clean.txt");  // new textfile
+		DatabaseManager dm1 = new DatabaseManagerImpl(newFile, breath);
+		fileB = new File("MyDatabaseAnswers3.txt");   // solutionFile - The model answer
 		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
 		WebCrawler wc2 = new WebCrawlerImpl();
 		WebCrawler wc3 = new WebCrawlerImpl();
-		wc1.setDepth(depth); wc2.setDepth(depth); wc3.setDepth(depth);
-		wc1.setBreath(breath); wc2.setDepth(depth); wc3.setDepth(depth);
-		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
-		Queue<WebNode> q2 = wc1.crawl(webPage2);  // href11.html
-		Queue<WebNode> q3 = wc1.crawl(webPage2);  // href12.html
-		boolean isFull1 = dm.writeToTempTable(q1);  //load Queues into the SAME database
-		boolean isFull2 = dm.writeToTempTable(q2);
-		boolean isFull3 = dm.writeToTempTable(q3);
 		
-		assertFalse("Test to verify that Temp URL is not full: ", isFull3);
-		try {
-			fileC = dm.getDatabaseFile(); 
+		wc1.setBreath(breath); wc2.setDepth(breath); wc3.setDepth(breath);
+		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
+		Queue<WebNode> q2 = wc2.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc3.crawl(webPage2);  // href12.html
+		boolean isFull1 = dm1.writeToTempTable(q1);  //load Queues into the SAME database
+		boolean isFull2 = dm1.writeToTempTable(q2);
+		boolean isFull3 = dm1.writeToTempTable(q3);
+		
+		assertFalse("Test to verify that Temp URL is not full1: ", isFull1);
+		assertFalse("Test to verify that Temp URL is not full2: ", isFull2);
+		assertFalse("Test to verify that Temp URL is not full3: ", isFull3);
+		
+		fileC = dm1.getDatabaseFile();
+		try { 
 			assertEquals("The Temp Table has been correctly updated & Not Full", 
 				    FileUtils.readFileToString(fileB, "utf-8"), 
 				    FileUtils.readFileToString(fileC, "utf-8"));
@@ -223,22 +225,26 @@ public class DatabaseManagerTest {
 	 * Test writeToTempTable() check that it correctly updates the table of Temporary URL links
 	 * and also returns false if the table is now full after the update.
 	 */
-	@Test
+/*	@Test
 	public void testWriteToTempTable2(){
 		
-		int depth = 6;
 		int breath = 10;
+		fileB = new File("file:href12");   // solutionFile - The model answer
 		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
 		WebCrawler wc2 = new WebCrawlerImpl();
 		WebCrawler wc3 = new WebCrawlerImpl();
-		wc1.setDepth(depth); wc2.setDepth(depth); wc3.setDepth(depth);
-		wc1.setBreath(breath); wc2.setDepth(depth); wc3.setDepth(depth);
+		
+		wc1.setBreath(breath); wc2.setDepth(breath); wc3.setDepth(breath);
 		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
-		Queue<WebNode> q2 = wc1.crawl(webPage2);  // href11.html
-		Queue<WebNode> q3 = wc1.crawl(webPage2);  // href12.html
+		Queue<WebNode> q2 = wc2.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc3.crawl(webPage2);  // href12.html
 		boolean isFull1 = dm.writeToTempTable(q1);  //load Queues into the SAME database
 		boolean isFull2 = dm.writeToTempTable(q2);
 		boolean isFull3 = dm.writeToTempTable(q3);
+		
+		assertFalse("Test to verify that Temp URL is not full1: ", isFull1);
+		assertFalse("Test to verify that Temp URL is not full2: ", isFull2);
+		assertFalse("Test to verify that Temp URL is not full3: ", isFull3);
 		
 		assertTrue("Test to verify that Temp URL is NOW full: ", isFull3);
 		try {
@@ -257,22 +263,26 @@ public class DatabaseManagerTest {
 	 * Test writeToTempTable() check that it DOES NOT updates the table of Temporary URL links
 	 * because the Table is already full.
 	 */
-	@Test
+/*	@Test
 	public void testWriteToTempTable3(){
 		
-		int depth = 6;
 		int breath = 10;
+		fileB = new File("file:href12");   // solutionFile - The model answer
 		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
 		WebCrawler wc2 = new WebCrawlerImpl();
 		WebCrawler wc3 = new WebCrawlerImpl();
-		wc1.setDepth(depth); wc2.setDepth(depth); wc3.setDepth(depth);
-		wc1.setBreath(breath); wc2.setDepth(depth); wc3.setDepth(depth);
+		
+		wc1.setBreath(breath); wc2.setDepth(breath); wc3.setDepth(breath);
 		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
-		Queue<WebNode> q2 = wc1.crawl(webPage2);  // href11.html
-		Queue<WebNode> q3 = wc1.crawl(webPage2);  // href12.html
+		Queue<WebNode> q2 = wc2.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc3.crawl(webPage2);  // href12.html
 		boolean isFull1 = dm.writeToTempTable(q1);  //load Queues into the SAME database
 		boolean isFull2 = dm.writeToTempTable(q2);
 		boolean isFull3 = dm.writeToTempTable(q3);
+		
+		assertFalse("Test to verify that Temp URL is not full1: ", isFull1);
+		assertFalse("Test to verify that Temp URL is not full2: ", isFull2);
+		assertFalse("Test to verify that Temp URL is not full3: ", isFull3);
 		
 		assertTrue("Test to verify that Temp URL is NOW full: ", isFull3);
 		try {
@@ -285,5 +295,5 @@ public class DatabaseManagerTest {
 			e.printStackTrace();
 		}	
 	}
-
+*/
 }
