@@ -296,5 +296,58 @@ public class DatabaseManagerTest {
 		assertEquals("Test Depth of Table is Maxed Out at 7: ", 7, dm1.sizeOfTempTable());
 		
 	}
+	
+	
+	@Test
+	/**
+	 * Tests that the a WebNode correctly updates at the bottom of a table for permanent URL links. 
+	 * And also checks that method returns false if a duplicate link is being added.
+	 */
+	public void testWriteToPermanentTable1(){
+		
+		int breath = 100;  
+		File newFile = new File("clean.txt");  // new textfile
+		DatabaseManager dm1 = new DatabaseManagerImpl(newFile, breath);
+		fileB = new File("MyDatabaseAnswers4.txt");   // solutionFile - The model answer
+		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
+		WebCrawler wc2 = new WebCrawlerImpl();
+		WebCrawler wc3 = new WebCrawlerImpl();
+		
+		// Load Up some Dummy Links in the Temp Data Table
+		wc1.setBreath(breath); wc2.setDepth(breath); wc3.setDepth(breath);
+		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
+		Queue<WebNode> q2 = wc2.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc3.crawl(webPage3);  // href12.html
+		boolean isFull1 = dm1.writeToTempTable(q1);  //load Queues into the SAME database
+		boolean isFull2 = dm1.writeToTempTable(q2);
+		boolean isFull3 = dm1.writeToTempTable(q3);
+		
+		// Some WebNodes to add to the Table of Permanent Links
+		WebNode wn1 = new WebNodeImpl("http://google.com", 1);
+		WebNode wn2 = new WebNodeImpl("http://mises.org", 2);
+		WebNode wn3 = new WebNodeImpl("http://google.com", 2);  // duplicate!!
+		
+		// Start Adding Perm Links
+		boolean isPermLoad1 = dm1.writeToPemanentTable(wn1);
+		boolean isPermLoad2 = dm1.writeToPemanentTable(wn2);
+		boolean isPermLoad3 = dm1.writeToPemanentTable(wn3);
+		
+		assertTrue("Test to verify that wn1 is in Table of Perm Links: ", isPermLoad1);
+		assertTrue("Test to verify that wn2 is in Table of Perm Links: ", isPermLoad2);
+		assertFalse("Test to verify that wn3 is NOT in Table of Perm Links: ", isPermLoad3);
+		
+		fileC = dm1.getDatabaseFile();
+		
+		try { 
+			assertEquals("The Perm Table has been correctly updated", 
+				    FileUtils.readFileToString(fileB, "utf-8"), 
+				    FileUtils.readFileToString(fileC, "utf-8"));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 }
