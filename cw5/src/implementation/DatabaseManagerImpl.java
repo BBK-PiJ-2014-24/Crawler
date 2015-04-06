@@ -266,14 +266,14 @@ public class DatabaseManagerImpl implements DatabaseManager {
 			return false;
 		else if(breath <= sizeTable + sizeQueue){  // overflow
 			int spareRoom = breath - sizeTable;
-			Queue<WebNode> qTruncated = new PriorityQueue<WebNode>(new priorityComparator());
+			Queue<WebNode> qTruncated = new PriorityQueue<WebNode>(new reversePriorityComparator());
 			for(int i=0; i < spareRoom; i++){   // Truncate Queue to fit Table
 				qTruncated.add(q.poll());
 			}
 			q = qTruncated;
 			isTruncated = true;
 		}
-		//else{							// Can Fit In Table
+								      // Can Now Fit In Table
 			BufferedReader br = null;;
 			FileWriter fw;
 			BufferedWriter bw = null;
@@ -326,7 +326,6 @@ public class DatabaseManagerImpl implements DatabaseManager {
 					ex3.printStackTrace();
 				}
 			}
-	//	}
 		return false;  // dummy
 	}  // end writeToTempTable()
 	
@@ -391,8 +390,8 @@ class reversePriorityComparator implements Comparator<WebNode>{
 	@Override
 	public int compare(WebNode w1, WebNode w2) {
 		
-		if(w1.getPriorityNum() > w2.getPriorityNum()) return 1;
-		if(w1.getPriorityNum() < w2.getPriorityNum()) return -1;
+		if(w1.getPriorityNum() < w2.getPriorityNum()) return 1;
+		if(w1.getPriorityNum() > w2.getPriorityNum()) return -1;
 		return 0;
 	}
 	
