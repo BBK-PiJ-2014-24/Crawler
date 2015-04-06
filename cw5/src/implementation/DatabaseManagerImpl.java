@@ -420,6 +420,54 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	} // end writeToPemanentTable()
 	
 	
+	// printPermanentTable()
+	// ---------------------
+	@Override
+	public void printPermanentTable() {
+		
+		boolean startSearch = false;  // Flag to Start the search in the Table of Permanent Links
+		
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		
+		try{
+			FileReader fr= new FileReader(databaseFile);
+			br = new BufferedReader(fr);
+	
+			String line = "";
+				
+			while((line=br.readLine()) != null){
+
+				if(line.equals("END")){		// Flag to start Search of the Table of Permanent Links
+					startSearch = true;
+				}
+				if(startSearch == true && line != null){ // Search IN the Table of Permanent Links for Duplicates
+					System.out.println(line);
+				}
+			  } // end while
+			}  // end try
+		catch(FileNotFoundException ex1){
+			ex1.printStackTrace();
+		}
+		catch(IOException ex2){
+			ex2.printStackTrace();
+		}
+		catch(NullPointerException ex2a){
+			ex2a.printStackTrace();
+			System.out.println("Null Pointer Exception");
+		}
+		finally{
+			try{
+				br.close();
+			}
+			catch(IOException ex3){
+				ex3.printStackTrace();
+			}
+		}
+		
+	}
+	
+	
 	/**
 	 * Create the Title Headers, "Priority" and "URL, for the database file 
 	 */
@@ -462,6 +510,8 @@ public class DatabaseManagerImpl implements DatabaseManager {
 			e.printStackTrace();
 		}
 	}
+
+
 
 	
 
