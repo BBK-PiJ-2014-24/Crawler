@@ -8,8 +8,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import iinterface.DatabaseManager;
@@ -233,7 +238,12 @@ public class DatabaseManagerImpl implements DatabaseManager {
 				br.close();
 				bw.close();
 				
-				this.databaseFile = new File("tempDatabase.txt");
+				final Path src = Paths.get(tempFile.getCanonicalPath());
+				final Path dst = Paths.get(this.databaseFile.getCanonicalPath());
+				Files.copy(src, dst,StandardCopyOption.REPLACE_EXISTING);  // copy tempFile into databaseFile
+				PrintWriter pw = new PrintWriter(tempFile);
+				pw.close();   // wipe tempFile
+		
 				return retrievedNode;
 			}
 			catch(IOException ex3){
@@ -243,6 +253,8 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		return null;
 	}
 
+	// writeToTempTable()
+	// ------------------
 	@Override
 	public boolean writeToTempTable(Queue<WebNode> q) {
 		
@@ -250,22 +262,23 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		int sizeQueue = q.size();
 		boolean isTruncated = false;
 		
-		if(breath >= sizeTable)  // already full
+		if(breath <= sizeTable)  // already full
 			return false;
-		else if(breath > sizeTable + sizeQueue){  // overflow
+		else if(breath <= sizeTable + sizeQueue){  // overflow
 			int spareRoom = breath - sizeTable;
-			Queue<WebNode> qTruncated = null;
+			Queue<WebNode> qTruncated = new PriorityQueue<WebNode>(new priorityComparator());
 			for(int i=0; i < spareRoom; i++){   // Truncate Queue to fit Table
 				qTruncated.add(q.poll());
 			}
 			q = qTruncated;
 			isTruncated = true;
 		}
-		else{							// Can Fit In Table
+		//else{							// Can Fit In Table
 			BufferedReader br = null;;
 			FileWriter fw;
 			BufferedWriter bw = null;
-			File tempFile = new File("tempDatabase.txt");  // temp Database to write to with amendments
+			File tempFile = new File("tempDatabase.txt");
+	
 			try{
 				FileReader fr= new FileReader(databaseFile);
 				br = new BufferedReader(fr);
@@ -281,6 +294,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
 							String strNode = i.toString();
 							bw.write(strNode + "\n");
 						}
+						bw.write("END\n");
 					} // end if
 					else
 						bw.write(line + "\n");   // copy and paste line
@@ -297,7 +311,12 @@ public class DatabaseManagerImpl implements DatabaseManager {
 					br.close();
 					bw.close();
 					
-					this.databaseFile = new File("tempDatabase.txt");
+					
+					final Path src = Paths.get(tempFile.getCanonicalPath());
+					final Path dst = Paths.get(this.databaseFile.getCanonicalPath());
+					Files.copy(src, dst,StandardCopyOption.REPLACE_EXISTING);  // copy tempFile into databaseFile
+					PrintWriter pw = new PrintWriter(tempFile);
+					pw.close();   // wipe tempFile
 					if(isTruncated == false)
 						return false;
 					else 
@@ -307,7 +326,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
 					ex3.printStackTrace();
 				}
 			}
-		}
+	//	}
 		return false;  // dummy
 	}  // end writeToTempTable()
 	
@@ -357,3 +376,24 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	
 
 } // end class
+
+// ---------------------------------------------------------------------------------------------
+/**
+ * Comparator class to order the priority queue of WebNodes by their priority Number.
+ * @author snewnham
+ *
+ */
+class reversePriorityComparator implements Comparator<WebNode>{
+
+	/**
+	 * Ranks WebNodes by their priorityNumber
+	 */
+	@Override
+	public int compare(WebNode w1, WebNode w2) {
+		
+		if(w1.getPriorityNum() > w2.getPriorityNum()) return 1;
+		if(w1.getPriorityNum() < w2.getPriorityNum()) return -1;
+		return 0;
+	}
+	
+}
