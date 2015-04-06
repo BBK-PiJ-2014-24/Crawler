@@ -17,6 +17,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
+
 import iinterface.DatabaseManager;
 import iinterface.WebNode;
 
@@ -266,11 +268,16 @@ public class DatabaseManagerImpl implements DatabaseManager {
 			return false;
 		else if(breath <= sizeTable + sizeQueue){  // overflow
 			int spareRoom = breath - sizeTable;
-			Queue<WebNode> qTruncated = new PriorityQueue<WebNode>(new reversePriorityComparator());
+			Queue<WebNode> qTruncated = new PriorityQueue<WebNode>(new priorityComparator());
+			Queue<WebNode> qTemp = new PriorityQueue<WebNode>(new priorityComparator());
 			for(int i=0; i < spareRoom; i++){   // Truncate Queue to fit Table
-				qTruncated.add(q.poll());
+				qTruncated.add(q.poll());  // queue is now in reverse order.
 			}
-			q = qTruncated;
+			
+			for(int i=0; i < spareRoom; i++){   // Truncate Queue to fit Table
+				qTemp.add(qTruncated.poll());  // queue is now back in order.
+			}
+			q = qTemp;
 			isTruncated = true;
 		}
 								      // Can Now Fit In Table
@@ -288,10 +295,9 @@ public class DatabaseManagerImpl implements DatabaseManager {
 				String line;
 				
 				while((line=br.readLine()) != null){  
-					//line = br.readLine();
 					if(line.equals("END")){
 						for(WebNode i : q){					// Add Queue to Bottom of Table
-							String strNode = i.toString();
+							String strNode = i.toString();  // ensure traverse in priority order
 							bw.write(strNode + "\n");
 						}
 						bw.write("END\n");
@@ -377,22 +383,4 @@ public class DatabaseManagerImpl implements DatabaseManager {
 } // end class
 
 // ---------------------------------------------------------------------------------------------
-/**
- * Comparator class to order the priority queue of WebNodes by their priority Number.
- * @author snewnham
- *
- */
-class reversePriorityComparator implements Comparator<WebNode>{
 
-	/**
-	 * Ranks WebNodes by their priorityNumber
-	 */
-	@Override
-	public int compare(WebNode w1, WebNode w2) {
-		
-		if(w1.getPriorityNum() < w2.getPriorityNum()) return 1;
-		if(w1.getPriorityNum() > w2.getPriorityNum()) return -1;
-		return 0;
-	}
-	
-}
