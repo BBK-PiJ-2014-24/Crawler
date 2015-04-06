@@ -265,7 +265,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		boolean isTruncated = false;
 		
 		if(breath <= sizeTable)  // already full
-			return false;
+			return true;
 		else if(breath <= sizeTable + sizeQueue){  // overflow
 			int spareRoom = breath - sizeTable;
 			Queue<WebNode> qTruncated = new PriorityQueue<WebNode>(new priorityComparator());
@@ -336,6 +336,90 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	}  // end writeToTempTable()
 	
 	
+	// writeToPemanentTable()
+	// ----------------------
+	@Override
+	public boolean writeToPemanentTable(WebNode wn) {
+		
+		String candidateLink = wn.getWebLink();
+		
+		boolean startSearch = false;  // Flag to Start the search in the Table of Permanent Links
+		boolean foundDuplicate = false;  // Flag for finding a copy of the link in the Table of Permanent Links
+	
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		
+		try{
+			FileReader fr= new FileReader(databaseFile);
+			br = new BufferedReader(fr);
+	
+			String line = "";
+				
+			while((line=br.readLine()) != null){
+				if(foundDuplicate == true)
+					break;
+				if(line.equals("END")){		// Flag to start Search of the Table of Permanent Links
+					startSearch = true;
+					line = br.readLine();  // jump the headers
+					line = br.readLine();
+				}
+				if(startSearch == true && line != null){ // Search IN the Table of Permanent Links for Duplicates
+					StringTokenizer st = new StringTokenizer(line, "\t");
+					String tok1 = st.nextToken(); // Priority Number
+					if(st.hasMoreTokens()){  // check more tokens
+						String tok2 = st.nextToken(); // Link
+						if(tok2.equals(candidateLink)){
+							foundDuplicate = true;		// set flag
+						}
+					}
+				}
+			  } // end while
+			}  // end try
+		catch(FileNotFoundException ex1){
+			ex1.printStackTrace();
+		}
+		catch(IOException ex2){
+			ex2.printStackTrace();
+		}
+		catch(NullPointerException ex2a){
+			ex2a.printStackTrace();
+			System.out.println("Null Pointer Exception");
+		}
+		finally{
+			try{
+				br.close();
+			}
+			catch(IOException ex3){
+				ex3.printStackTrace();
+			}
+		}
+		
+		if(foundDuplicate == false){
+			FileWriter fw = null;
+			String newLink = wn.toString();
+			try{
+				fw = new FileWriter(this.databaseFile, true); 
+				bw = new BufferedWriter(fw);
+				bw.write(newLink + "\n");
+			}
+			catch(IOException ex4){
+				System.out.println("File Not Writable: " + databaseFile.toString());
+			}
+			finally{
+				try{
+					bw.close();
+				}
+				catch(IOException ex5){
+					ex5.printStackTrace();
+				}
+			}
+		}
+		if(foundDuplicate == false)
+			return true;
+		return false;
+	} // end writeToPemanentTable()
+	
+	
 	/**
 	 * Create the Title Headers, "Priority" and "URL, for the database file 
 	 */
@@ -378,6 +462,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
 			e.printStackTrace();
 		}
 	}
+
 	
 
 } // end class
