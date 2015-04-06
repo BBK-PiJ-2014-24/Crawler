@@ -347,5 +347,33 @@ public class DatabaseManagerTest {
 			e.printStackTrace();
 		}	
 	}
+	
+	
+	/**
+	 * Test to see if printPermanentTable prints out the links in the Permanent URL table
+	 * along with their priority numbers.
+	 */
+	@Test
+	public void testPrintPermanentTable(){
+		int breath = 100;  
+		File newFile = new File("clean.txt");  // new textfile
+		DatabaseManager dm1 = new DatabaseManagerImpl(newFile, breath);
+		fileB = new File("MyDatabaseAnswers4.txt");   // solutionFile - The model answer
+		WebCrawler wc1 = new WebCrawlerImpl();  // Separate crawlers, each crawling a diff webpage
+		WebCrawler wc2 = new WebCrawlerImpl();
+		WebCrawler wc3 = new WebCrawlerImpl();
+		
+		// Load Up some Dummy Links in the Temp Data Table
+		wc1.setBreath(breath); wc2.setDepth(breath); wc3.setDepth(breath);
+		Queue<WebNode> q1 = wc1.crawl(webPage1);  // href10.html
+		Queue<WebNode> q2 = wc2.crawl(webPage2);  // href11.html
+		Queue<WebNode> q3 = wc3.crawl(webPage3);  // href12.html
+		dm1.writeToTempTable(q1);  //load Queues into the SAME database
+		dm1.writeToTempTable(q2);
+		dm1.writeToTempTable(q3);
+		
+		dm1.printPermanentTable();
+		
+	}
 
 }
