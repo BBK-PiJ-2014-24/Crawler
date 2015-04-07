@@ -235,17 +235,26 @@ public class WebCrawlerTest {
 			ansArr.add("\"http://www.searchengineworld.com/robots/robots_tutorial.htm\"");
 			ansArr.add("\"http://www.cse.ucsc.edu/~ejw/tatum/images/tatum-crawling.jpg\"");
 			ansArr.add("\"http://www.dcs.bbk.ac.uk/~martin/sewn/ls3/images/GoodGoing-YouGotTheLink.jpg\"");
-			ansArr.add("Incorrect Link Concaternation");  // ftp page issue
+			ansArr.add("\"ftp://ftp.site.uottawa.ca/pub/courses/Winter/csi3310/CoreJavaBook/ch8/CrawlerApplet/CrawlerApplet.java\"");  // ftp page issue
 			PriorityQueue<WebNode> q = wc.crawl(webPageX);
 			for(WebNode node : q){
 				String s = node.getWebLink();
 				assertTrue("Test crawl() on Mark Levine's Test Page: ", ansArr.contains(s)); 
 			}
-			String s = q.poll().getWebLink(); 
-			
-			
-			
+			String s = q.poll().getWebLink(); 	
 		}
+		
+		/**
+		 * Test to check search method works correctly.
+		 */
+		@Test
+		public void testSearch(){
+			String even = "even";
+			String odd = "odd";
+			
+			assertTrue("Test search() can detect even length strings", wc.search(even));
+			assertFalse("Test search() can detect odd length strings", wc.search(odd));
+		}
+		
 	
-
 }
