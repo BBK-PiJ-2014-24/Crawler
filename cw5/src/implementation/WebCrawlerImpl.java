@@ -222,7 +222,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		// -----
 		System.out.println("Welcome to the Web Crawler\n");
 		
-		System.out.print("What Web Page Do You Want to Start the Web Crawler With?  ");
+		System.out.print("What is the Starting Page for your crawl?  ");
 		String webPage = input.nextLine();
 		webPage = "\"" + webPage + "\""; // enclose webPage in ""
 		WebNode wn = new WebNodeImpl(webPage, this.priorityNum); //PriorityNumber will be set to zero on retrieve from database
@@ -230,15 +230,15 @@ public class WebCrawlerImpl implements WebCrawler{
 		this.tempQueue.add(wn);
 		databaseManager.writeToTempTable(tempQueue);  //add starting webNode immediately to database table
 		
-		System.out.print("Do You Wish to Determine the Breath or the Depth of the Search? (Press B for Breath,  D for Depth)  ");
+		System.out.print("\nDo You Wish to Determine the Breath or the Depth of the Search? (Press B for Breath,  D for Depth)  ");
 		String BorD = input.nextLine();
 		
 		if(BorD.equals("B") || BorD.equals("b")){
-			System.out.print("What is the Maximum Breath of your Search? ");
+			System.out.print("\nWhat is the Maximum Breath of your Search? ");
 			setBreath(input.nextInt()); // set breath in database as well.
 		}
 		else if(BorD.equals("D") || BorD.equals("d")){
-			System.out.print("What is the Maximum Depth of your search? ");
+			System.out.print("\nWhat is the Maximum Depth of your search? ");
 			this.depth = input.nextInt();
 		}
 		else{
@@ -248,6 +248,8 @@ public class WebCrawlerImpl implements WebCrawler{
 		// Start Loop
 		// ----------
 		while(true){
+			// validity checks
+			// ---------------
 			if(this.depth <= this.priorityNum){   // depth check
 				System.out.println("Maximum Crawl Depth Has Been Reached");
 				break;
@@ -256,27 +258,34 @@ public class WebCrawlerImpl implements WebCrawler{
 				System.out.println("Maximum Crawl Breath Has Been Reached");
 				break;
 			}
-			System.out.print("Do You Wish to Search " + wn.getWebLink() + "? (Y/N) "); // Search Options
+			
+		    // the crawl()
+			// -----------
+			System.out.println("\nBegining the Crawl of " + wn.getWebLink());
+
+			this.tempQueue.clear(); // clear the old queue of WebNodes in preparation for new crawl
+			this.tempQueue = crawl(wn.getWebLink());				   // CRAWL()!
+			breathFlag = databaseManager.writeToTempTable(tempQueue);  // write queue of links to database
+																	   // return true if Table is Full
+			System.out.println("\nTABLE OF TEMPORARY URL LINKS");
+			databaseManager.printTempTable();
+			
+			// Ask to Search()
+			// ---------------
+			System.out.print("\nDo You Wish to Search " + wn.getWebLink() + "? (Y/N) "); // Search Options
 			String wantSearch = input.nextLine();
 			if(wantSearch.equals(""))        //Add check as Scanner seems to miss input sometimes
 				wantSearch = input.nextLine();
-			System.out.println("wantSearch: " + wantSearch);
-				if(wantSearch.equals("Y") || wantSearch.equals("y")){
-					// search()
-					System.out.println("INSIDE");
-					databaseManager.writeToPemanentTable(wn);  // write WebNode to Permanent Table
-				}
-			
-			this.tempQueue.clear(); // clear the old queue of WebNodes in preparation for new crawl
-			this.tempQueue = crawl(wn.getWebLink());						   // CRAWL()!
-			breathFlag = databaseManager.writeToTempTable(tempQueue);  // write queue of links to database
-																	   // return true if Table is Full
-			System.out.println("\n\nTABLE OF TEMPORARY URL LINKS");
-			databaseManager.printTempTable();
+			if(wantSearch.equals("Y") || wantSearch.equals("y")){
+				// search()
+				databaseManager.writeToPemanentTable(wn);  // write WebNode to Permanent Table
+			}
 			System.out.println("\nTABLE OF PERMANENT URL LINKS");
 			databaseManager.printPermanentTable(); 
-			System.out.println("\n\n");
+			System.out.println();
 			
+			// Preparation for Next Crawl
+			// --------------------------
 			wn = databaseManager.retrieveNextWebNode(); // retrieve the next link from the database.
 			if(wn == null){  							// if No WebNodes Returned
 				System.out.println("No More Links Left to Crawl");
