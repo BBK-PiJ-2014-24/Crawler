@@ -36,7 +36,7 @@ public class WebCrawlerImpl implements WebCrawler{
 	// -----------
 	public WebCrawlerImpl(){
 		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  
-		priorityNum = 1;
+		priorityNum = 0;
 		breath = BREATH_DEFAULT; // defaults
 		depth = DEPTH_DEFAULT;  // defaults
 		database = new File("database.txt"); // defaults
@@ -135,7 +135,7 @@ public class WebCrawlerImpl implements WebCrawler{
 														link = linkAnalyzer(link, root, webPage);  // convert to absolute link
 													}									// from any relative or root-relative
 													
-													System.out.println("Crawl Answer = " + link);
+													//System.out.println("Crawl Answer = " + link);
 													WebNode w = new WebNodeImpl(link, this.priorityNum);  // create WebNode out of Link
 													crawlQueue.add(w);   // Add WebNode to Queue of Links
 												} // end if
@@ -190,7 +190,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		if(c == '"')											// ignore quote mark
 			c = link.charAt(1);
 		
-		if(c == 'h' || c == 'f'){  //check for absolute link (h for http: or f for file:)
+		if(c == 'h' || c == 'f'){  //check for absolute link (h for http: or f for file: or f for ftp)
 			return "\"" + link + "\"";
 		}
 		else if(c == '/'){ // check for root+relative link
@@ -209,10 +209,10 @@ public class WebCrawlerImpl implements WebCrawler{
 		return "Incorrect Link Concaternation";
 	}
 
-	// launchInterface()
-	// -----------------
+	// launch()
+	// --------
 	@Override
-	public void launchInterface() {
+	public void launch() {
 		
 		Scanner input = new Scanner(System.in);
 		boolean breathFlag = false; // Flag to indicate that the max breath has been reached.
@@ -222,13 +222,15 @@ public class WebCrawlerImpl implements WebCrawler{
 		// -----
 		System.out.println("Welcome to the Web Crawler\n");
 		
-		System.out.print("What Web Page Do You Want to Start the Web Crawler With?");
+		System.out.print("What Web Page Do You Want to Start the Web Crawler With?  ");
 		String webPage = input.nextLine();
+		webPage = "\"" + webPage + "\""; // enclose webPage in ""
 		WebNode wn = new WebNodeImpl(webPage, this.priorityNum); //PriorityNumber will be set to zero on retrieve from database
+		this.priorityNum++;
 		this.tempQueue.add(wn);
 		databaseManager.writeToTempTable(tempQueue);  //add starting webNode immediately to database table
 		
-		System.out.print("Do You Wish to Determine the Breath or the Depth of the Search? (Press B for Breath,  D for Depth)");
+		System.out.print("Do You Wish to Determine the Breath or the Depth of the Search? (Press B for Breath,  D for Depth)  ");
 		String BorD = input.nextLine();
 		
 		if(BorD.equals("B") || BorD.equals("b")){
@@ -254,11 +256,14 @@ public class WebCrawlerImpl implements WebCrawler{
 				System.out.println("Maximum Crawl Breath Has Been Reached");
 				break;
 			}
-			
-			System.out.print("Do You Wish to Search " + wn.getWebLink() + "? (Y/N)"); // Search Options
+			System.out.print("Do You Wish to Search " + wn.getWebLink() + "? (Y/N) "); // Search Options
 			String wantSearch = input.nextLine();
-				if(wantSearch.equals("Y")){
+			if(wantSearch.equals(""))        //Add check as Scanner seems to miss input sometimes
+				wantSearch = input.nextLine();
+			System.out.println("wantSearch: " + wantSearch);
+				if(wantSearch.equals("Y") || wantSearch.equals("y")){
 					// search()
+					System.out.println("INSIDE");
 					databaseManager.writeToPemanentTable(wn);  // write WebNode to Permanent Table
 				}
 			
@@ -266,10 +271,11 @@ public class WebCrawlerImpl implements WebCrawler{
 			this.tempQueue = crawl(wn.getWebLink());						   // CRAWL()!
 			breathFlag = databaseManager.writeToTempTable(tempQueue);  // write queue of links to database
 																	   // return true if Table is Full
-			System.out.println("TABLE OF TEMPORARY URL LINKS");
+			System.out.println("\n\nTABLE OF TEMPORARY URL LINKS");
 			databaseManager.printTempTable();
 			System.out.println("\nTABLE OF PERMANENT URL LINKS");
 			databaseManager.printPermanentTable(); 
+			System.out.println("\n\n");
 			
 			wn = databaseManager.retrieveNextWebNode(); // retrieve the next link from the database.
 			if(wn == null){  							// if No WebNodes Returned
