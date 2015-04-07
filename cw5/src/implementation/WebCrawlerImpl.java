@@ -15,6 +15,7 @@ import java.net.URLConnection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import iinterface.DatabaseManager;
@@ -44,8 +45,8 @@ public class WebCrawlerImpl implements WebCrawler{
 		priorityNum = 0;
 		breath = BREATH_DEFAULT; // defaults
 		depth = DEPTH_DEFAULT;  // defaults
-		database = new File("database.txt");
-		databaseManager = new DatabaseManagerImpl(database);
+		database = new File("database.txt"); // defaults
+		databaseManager = new DatabaseManagerImpl(database, breath);
 	}
 	
 
@@ -62,6 +63,7 @@ public class WebCrawlerImpl implements WebCrawler{
 	
 	public void setBreath(int b){
 		this.breath = b;
+		databaseManager.setBreath(b);
 	}
 	
 	public int getBreath(){
@@ -149,7 +151,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			try {
 				priorityNum++;
 				inpStream.close();
-				databaseManager.writeToTempTable(tempQueue);
+				//databaseManager.writeToTempTable(tempQueue);
 				return tempQueue;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -189,7 +191,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		if(c == '"')											// ignore quote mark
 			c = link.charAt(1);
 		
-		if(c == 'h'){  //check for absolute link
+		if(c == 'h' || c == 'f'){  //check for absolute link (h for http: or f for file:)
 			return "\"" + link + "\"";
 		}
 		else if(c == '/'){ // check for root+relative link
@@ -208,41 +210,78 @@ public class WebCrawlerImpl implements WebCrawler{
 		return "Incorrect Link Concaternation";
 	}
 
-
-
-	
-	
-	/**
-	 * A private method that writes the PriorityQueue, tempQueue to a text file.
-	 */
-/*	private void writeToDatabase(){
+	// launchInterface()
+	// -----------------
+	@Override
+	public void launchInterface() {
 		
-		BufferedWriter bw = null;
+		Scanner input = new Scanner(System.in);
+		boolean breathFlag = false; // Flag to indicate that the max breath has been reached.
+									// i.e. the table of temp URL links in the database is FULL
 		
-		try{
-			FileWriter fw = new FileWriter(this.database, true);  // true =  ammend
-			bw = new BufferedWriter(fw);
+		// Input
+		// -----
+		System.out.println("Welcome to the Web Crawler\n");
+		
+		System.out.print("What Web Page Do You Want to Start the Web Crawler With?");
+		String webPage = input.nextLine();
+		WebNode wn = new WebNodeImpl(webPage, 1); //PriorityNumber will be set to zero on retrieve from database
+		this.tempQueue.add(wn);
+		databaseManager.writeToTempTable(tempQueue);  //add starting webNode immediately to database table
+		
+		System.out.print("Do You Wish to Determine the Breath or the Depth of the Search? (Press B for Breath,  D for Depth)");
+		String BorD = input.nextLine();
+		
+		if(BorD.equals("B") || BorD.equals("b")){
+			System.out.print("What is the Maximum Breath of your Search? ");
+			setBreath(input.nextInt()); // set breath in database as well.
+		}
+		else if(BorD.equals("D") || BorD.equals("d")){
+			System.out.print("What is the Maximum Depth of your search? ");
+			this.depth = input.nextInt();
+		}
+		else{
+			System.out.print("invalid input");
+		}
+		
+		// Start Loop
+		// ----------
+		while(true){
+			if(this.depth <= this.priorityNum){   // depth check
+				System.out.println("Maximum Crawl Depth Has Been Reached");
+				break;
+			}
+			if(breathFlag == true){				// breath check
+				System.out.println("Maximum Crawl Breath Has Been Reached");
+				break;
+			}
 			
-			for(WebNode wn : tempQueue){
-				bw.write(wn.toString() + "\n");
-			} // end loop
+			System.out.print("Do You Wish to Search " + wn.getWebLink() + "? (Y/N)"); // Search Options
+			String wantSearch = input.nextLine();
+				if(wantSearch.equals("Y")){
+					// search()
+					databaseManager.writeToPemanentTable(wn);  // write WebNode to Permanent Table
+				}
+			
+			this.tempQueue.clear(); // clear the old queue of WebNodes in preparation for new crawl
+			this.tempQueue = crawl(wn.getWebLink());						   // CRAWL()!
+			breathFlag = databaseManager.writeToTempTable(tempQueue);  // write queue of links to database
+																	   // return true if Table is Full
+			System.out.println("TABLE OF TEMPORARY URL LINKS");
+			databaseManager.printTempTable();
+			System.out.println("\nTABLE OF PERMANENT URL LINKS");
+			databaseManager.printPermanentTable(); 
+			
+			wn = databaseManager.retrieveNextWebNode(); // retrieve the next link from the database.
+			if(wn == null){  							// if No WebNodes Returned
+				System.out.println("No More Links Left to Crawl");
+				break;
+			}
+			
+		} // end while
+		input.close();
+	} // end launchInterface()
 
-		}// end try
-		catch (IOException ex1){
-				System.out.println("File Not Writable: " + this.database.toString());
-				ex1.printStackTrace();
-		}
-		finally{
-			try{
-				bw.close();
-			}
-			catch(IOException ex2){
-				System.out.println("File Can't Be Closed");
-			}
-		}
-		
-	} */
-	
 } // end class
 
 // ----------------------------------------------------------------------------------------
