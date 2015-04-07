@@ -1,0 +1,11 @@
+	Priority			URL
+-------------------------------------------------------------------------------------------------------------
+	0			"file:href3.html"
+	1			"http://google.com"
+	1			"http://bbc.co.uk"
+	1			"http://mises.org"
+	2			"http://stackoverflow.com"
+	2			"http://www.mkyong.com"
+	2			"http://www.theguardian.com/uk"
+	3			"https://www.facebook.com"
+	3			"http://www.independent.co.uk"

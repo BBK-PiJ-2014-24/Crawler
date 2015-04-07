@@ -1,0 +1,18 @@
+	Priority			URL
+-------------------------------------------------------------------------------------------------------------
+	1			"file:href11.html"
+	1			"file:href12.html"
+	1			"file:href13.html"
+	1			"file:href14.html"
+	1			"file:href15.html"
+	1			"file:href16.html"
+	1			"file:href17.html"
+	1			"file:href18.html"
+	1			"file:href19.html"
+	1			"file:href20.html"
+	1			"file:href21.html"
+END
+	Priority			URL
+-------------------------------------------------------------------------------------------------------------
+	1			"http://google.com"
+	2			"http://mises.org"
