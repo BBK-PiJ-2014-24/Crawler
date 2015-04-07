@@ -71,8 +71,8 @@ public interface WebCrawler {
 	
 	
 	/**
-	 * Method that launches the interface, allowing the programmer to interact with the crawl/  
+	 * Method that launches the interface, allowing the programmer to interact with the crawler 
 	 */
-	void launchInterface();
+	void launch();
 	
 }
