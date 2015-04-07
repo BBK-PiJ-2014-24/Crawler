@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.StringTokenizer;
+
 import iinterface.DatabaseManager;
 import iinterface.HTMLread;
 import iinterface.WebCrawler;
@@ -28,13 +29,14 @@ public class WebCrawlerImpl implements WebCrawler{
 	private int depth;		// Max Priority Number a Link Can hold  
 	private static final int BREATH_DEFAULT = 100;  // Default Max Breath
 	private static final int DEPTH_DEFAULT = 6;		// Default Max Depth
+	private static final char LOW = (char) Integer.MIN_VALUE; // constant used in crawl()
 	
 	
 	// Constructor
 	// -----------
 	public WebCrawlerImpl(){
 		tempQueue = new PriorityQueue<WebNode>(new priorityComparator());  
-		priorityNum = 0;
+		priorityNum = 1;
 		breath = BREATH_DEFAULT; // defaults
 		depth = DEPTH_DEFAULT;  // defaults
 		database = new File("database.txt"); // defaults
@@ -72,14 +74,19 @@ public class WebCrawlerImpl implements WebCrawler{
 	@Override
 	public PriorityQueue<WebNode> crawl(String webPage) {
 		
-		WebNode startNode = new WebNodeImpl("\"" + webPage + "\"", priorityNum);
-		tempQueue.add(startNode);  // add the starting URL to queue
-		priorityNum++;
+		StringTokenizer st = new StringTokenizer(webPage,"\""); // Ensure that the String webPage 
+		String tok1 = st.nextToken();							// is Stripped of any ""
+		webPage = tok1;
+		PriorityQueue<WebNode> crawlQueue= new PriorityQueue<WebNode>(new priorityComparator());
+		//WebNode startNode = new WebNodeImpl("\"" + tok1 + "\"", priorityNum); // Re-apply "" in WebNode
+		//tempQueue.add(startNode);  // add the starting URL to queue
+		//priorityNum++;
 		InputStream inpStream = null;
 		HTMLread hReader;
-		char LOW = (char) Integer.MIN_VALUE;
+		//char LOW = (char) Integer.MIN_VALUE;
 		String root = "";// The root of the link (subject to change below) 
-		boolean tabTestA = true;  // href link is with <a> anchor tab rather than a <base> tab (aTest = false) 
+		boolean tabTestA = true;  // flag for href link. True if link with <a> anchor tab, 
+								  // false if link with <base> tab 
 		
 		
 		// Set Up URL Connection and InputSteam
@@ -107,7 +114,7 @@ public class WebCrawlerImpl implements WebCrawler{
 									if(hReader.skipSpace(inpStream,'s')==LOW)	    //<bas
 										if(hReader.skipSpace(inpStream,'e')==LOW)	//<base 
 											tabTestA = false; 							// conditions met for finding a 
-							}	// end <base> search													// base reference
+							}	// end <base> search								    // base reference
 					
 						if(hReader.readUntil(inpStream, ' ', 'h') == true);     // ensure space <a_
 							if(hReader.skipSpace(inpStream,'h')==LOW)           // <a h
@@ -129,8 +136,8 @@ public class WebCrawlerImpl implements WebCrawler{
 													}									// from any relative or root-relative
 													
 													System.out.println("Crawl Answer = " + link);
-													WebNode w = new WebNodeImpl(link, priorityNum);
-													tempQueue.add(w);
+													WebNode w = new WebNodeImpl(link, this.priorityNum);  // create WebNode out of Link
+													crawlQueue.add(w);   // Add WebNode to Queue of Links
 												} // end if
 						}
 					}
@@ -141,15 +148,15 @@ public class WebCrawlerImpl implements WebCrawler{
 		}
 		finally{
 			try {
-				priorityNum++;
+				//priorityNum++;
 				inpStream.close();
 				//databaseManager.writeToTempTable(tempQueue);
-				return tempQueue;
+				return crawlQueue;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}  // end Finally
-		return tempQueue;
+		return crawlQueue;
 	} // end crawl()
 	
 	
@@ -217,7 +224,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		
 		System.out.print("What Web Page Do You Want to Start the Web Crawler With?");
 		String webPage = input.nextLine();
-		WebNode wn = new WebNodeImpl(webPage, 1); //PriorityNumber will be set to zero on retrieve from database
+		WebNode wn = new WebNodeImpl(webPage, this.priorityNum); //PriorityNumber will be set to zero on retrieve from database
 		this.tempQueue.add(wn);
 		databaseManager.writeToTempTable(tempQueue);  //add starting webNode immediately to database table
 		
@@ -269,7 +276,7 @@ public class WebCrawlerImpl implements WebCrawler{
 				System.out.println("No More Links Left to Crawl");
 				break;
 			}
-			
+			this.priorityNum++; 
 		} // end while
 		input.close();
 	} // end launchInterface()
