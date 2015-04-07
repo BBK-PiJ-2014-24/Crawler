@@ -69,4 +69,10 @@ public interface WebCrawler {
 	 */
 	File getDatabase();
 	
+	
+	/**
+	 * Method that launches the interface, allowing the programmer to interact with the crawl/  
+	 */
+	void launchInterface();
+	
 }
