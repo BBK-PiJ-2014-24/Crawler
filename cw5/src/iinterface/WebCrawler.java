@@ -75,4 +75,19 @@ public interface WebCrawler {
 	 */
 	void launch();
 	
+	/**
+	 * A default method for this interface. Includes a simple method for testing the method, but should be 
+	 * overwritten when a search algorhythm is required. 
+	 * @param webPage - Name of the web page to be searched
+	 * @return returns true if the length of the link is even, false if of odd length
+	 */
+	default boolean search(String webPage){
+		
+		int mod = (webPage.length()) % 2;
+		if(mod == 0)
+			return true;
+		else
+			return false;
+	}
+	
 }
