@@ -222,7 +222,7 @@ public class WebCrawlerImpl implements WebCrawler{
 		// -----
 		System.out.println("Welcome to the Web Crawler\n");
 		
-		System.out.print("What is the Starting Page for your crawl?  ");
+		System.out.print("What is the Starting Page for your Crawl?  ");
 		String webPage = input.nextLine();
 		webPage = "\"" + webPage + "\""; // enclose webPage in ""
 		WebNode wn = new WebNodeImpl(webPage, this.priorityNum); //PriorityNumber will be set to zero on retrieve from database
@@ -276,11 +276,17 @@ public class WebCrawlerImpl implements WebCrawler{
 			String wantSearch = input.nextLine();
 			if(wantSearch.equals(""))        //Add check as Scanner seems to miss input sometimes
 				wantSearch = input.nextLine();
-			if(wantSearch.equals("Y") || wantSearch.equals("y")){
-				// search()
-				databaseManager.writeToPemanentTable(wn);  // write WebNode to Permanent Table
-			}
-			System.out.println("\nTABLE OF PERMANENT URL LINKS");
+			if(wantSearch.equals("Y") || wantSearch.equals("y")){ // if want to search
+				boolean foundSearch = false;  					  // flag for successful search
+				foundSearch = search(wn.getWebLink());			  // SEARCH()!	
+				if(foundSearch == true){
+					System.out.println("\nSearch of " + wn.getWebLink() + " was successful");
+					databaseManager.writeToPemanentTable(wn);  // write WebNode to Permanent Table
+				}
+				else
+					System.out.println("\nSearch of " + wn.getWebLink() + " was unsuccessful");	
+			} // end if want to search
+			System.out.println("\nTABLE OF PERMANENT URL LINKS");  // print out permanent table
 			databaseManager.printPermanentTable(); 
 			System.out.println();
 			
