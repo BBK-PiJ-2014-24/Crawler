@@ -235,7 +235,7 @@ public class WebCrawlerTest {
 			ansArr.add("\"http://www.searchengineworld.com/robots/robots_tutorial.htm\"");
 			ansArr.add("\"http://www.cse.ucsc.edu/~ejw/tatum/images/tatum-crawling.jpg\"");
 			ansArr.add("\"http://www.dcs.bbk.ac.uk/~martin/sewn/ls3/images/GoodGoing-YouGotTheLink.jpg\"");
-			ansArr.add("\"ftp://ftp.site.uottawa.ca/pub/courses/Winter/csi3310/CoreJavaBook/ch8/CrawlerApplet/CrawlerApplet.java\"");  // ftp page issue
+			ansArr.add("Incorrect Link Concaternation");  // REJECT ftp page link
 			PriorityQueue<WebNode> q = wc.crawl(webPageX);
 			for(WebNode node : q){
 				String s = node.getWebLink();
