@@ -25,6 +25,7 @@ ASSUMPTIONS:
 ------------
 
 	i) All user inputs will be valid.
+	ii) The Crawler will only detect links with the 'schemes' http: and file: .
 	
 
 JAVA PROGRAM
@@ -41,4 +42,6 @@ JAVA PROGRAM
  * 3) WebNodeImpl - implements the WebNode interface. It is a node that contains a WebLink and its
  * 		    priorityNumber.
  *
- * 4) PriorityComparator - a comparator class, which helps order webNodes by their priority number	
+ * 4) PriorityComparator - a comparator class, which helps order webNodes by their priority number
+ *
+ * Please read the JavaDoc for further details.	
