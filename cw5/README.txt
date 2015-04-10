@@ -25,3 +25,20 @@ ASSUMPTIONS:
 ------------
 
 	i) All user inputs will be valid.
+	
+
+JAVA PROGRAM
+------------
+
+ * The WebCrawler interface is implemented by WebCrawlerImpl. Note that this implementation is dependent 
+ * on FOUR other classes:
+ *
+ * 1) HTMLreadImpl - implements the HTMLread interface.
+ *
+ * 2) DatabaseManagerImpl - implements the DatabaseManager interface. It is responsible for exchanging
+ * 			    data between the WebCrawler and the database(text file).
+ *
+ * 3) WebNodeImpl - implements the WebNode interface. It is a node that contains a WebLink and its
+ * 		    priorityNumber.
+ *
+ * 4) PriorityComparator - a comparator class, which helps order webNodes by their priority number	
