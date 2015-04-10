@@ -199,12 +199,24 @@ public class WebCrawlerImpl implements WebCrawler{
 	public String linkAnalyzer(String link, String root, String currentWebPage) {
 
 		char c = link.charAt(0);
-		if(c == '"')											// ignore quote mark
+		
+		if(c == '"') // ignore Any quote mark
 			c = link.charAt(1);
 		
-		if(c == 'h' || c == 'f'){  //check for absolute link (h for http: or f for file: or f for ftp)
+		if(c == 'h' || c == 'H'){  //check for absolute link (h for http:)
 			return "\"" + link + "\"";
 		}
+		
+		else if(c == 'f' || c == 'F'){  //check for absolute link ("fi" for file:)
+			char c2;  				    // checking second char
+			if(link.charAt(0) == '"')   // ignore any quote mark
+				c2 = link.charAt(2);  
+			else
+				c2 = link.charAt(1);
+			if(c2 == 'i' || c2 == 'I') // ensure "file" & NOT "ftp"
+				return "\"" + link + "\"";
+		}
+		
 		else if(c == '/'){ // check for root+relative link
 			if(root ==""){  // if a root has not yet been detected...
 				root = extractRoot(currentWebPage);  //extract one from currentWebPage
@@ -212,6 +224,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			link = link.substring(1);  	// get rid of starting quote mark " and /
 			return "\"" + root + link + "\"";
 		}
+		
 		else if(c == '.'){ // check for relative link
 			link = link.substring(3);  						// get rid of start " and ../
 			currentWebPage = extractRoot(currentWebPage);   // Go Back UP a Directory in the HTML path
