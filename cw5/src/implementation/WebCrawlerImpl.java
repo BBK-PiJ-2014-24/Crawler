@@ -148,8 +148,10 @@ public class WebCrawlerImpl implements WebCrawler{
 													}									// from any relative or root-relative
 													
 													//System.out.println("Crawl Answer = " + link);
-													WebNode w = new WebNodeImpl(link, this.priorityNum);  // create WebNode out of Link
-													crawlQueue.add(w);   // Add WebNode to Queue of Links
+													if(link !=null){  // if the link is valid
+														WebNode w = new WebNodeImpl(link, this.priorityNum);  // create WebNode out of Link
+														crawlQueue.add(w);   // Add WebNode to Queue of Links
+													}
 												} // end if
 						}
 					}
@@ -231,7 +233,7 @@ public class WebCrawlerImpl implements WebCrawler{
 			return "\"" + currentWebPage + link + "\"";
 		}
 		
-		return "Incorrect Link Concaternation";
+		return null;   // An unrecognized link format;
 	}
 
 	// launch()
